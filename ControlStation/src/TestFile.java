@@ -9,6 +9,7 @@ public class TestFile
 		// DOES IT WORK NOW?!
 		// test edit from UPstream...
 		// one more test edit from DOWNstream...
+		// comment
 	}
 	
 }
