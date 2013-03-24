@@ -1,6 +1,10 @@
 package control.test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -16,8 +20,8 @@ public class BluetoothTest
 		// get NXTComm
 		
 		NXTComm nxtComm = null;
-		// InputStream in = null;
-		// OutputStream out = null;
+		InputStream in = null;
+		
 		try
 		{
 			nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -46,14 +50,19 @@ public class BluetoothTest
 			System.exit(-2);
 		}
 		
+		in = nxtComm.getInputStream();
+		
 		System.out.println("Connected to NXT");
 		
 		System.out.println("Waiting for message...");
 		try
 		{
+			String s;
+			
 			byte[] b = new byte[256];
-			nxtComm.getInputStream().read(b);
-			String s = new String(b);
+			int len = in.read(b);
+			s = new String(b, 0, len);
+			
 			System.out.println("Received: " + s);
 		}
 		catch (IOException e1)
@@ -64,14 +73,13 @@ public class BluetoothTest
 		
 		System.out.println("Message acquired! Waiting to send...");
 		
-		BluetoothTest.sleep(5);
+		// BluetoothTest.sleep(5);
 		
 		System.out.println("Sending message...");
 		
 		try
 		{
-			nxtComm.getOutputStream().write("Hello World".getBytes());
-			nxtComm.getOutputStream().flush();
+			nxtComm.write("Hello World".getBytes());
 		}
 		catch (IOException e)
 		{
@@ -81,7 +89,7 @@ public class BluetoothTest
 		
 		System.out.println("Message sent, waiting...");
 		
-		BluetoothTest.sleep(5);
+		// BluetoothTest.sleep(5);
 		
 		try
 		{
