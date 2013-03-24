@@ -2,6 +2,8 @@ package control.communication;
 
 public abstract class Message
 {
+	protected static int sequenceNumber = 0;
+	
 	protected String messageString = new String();
 	protected String formattedMessage = new String();
 	protected int seqNum = -1;

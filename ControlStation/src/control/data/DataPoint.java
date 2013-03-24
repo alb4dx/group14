@@ -8,7 +8,7 @@ public class DataPoint
 	private boolean touch;
 	private int ultrasonic;
 	
-	public DataPoint(int light, int sound, boolean touch, int ultrasonic)
+	public DataPoint(int light, int sound, int ultrasonic, boolean touch)
 	{
 		this.light = light;
 		this.sound = sound;
@@ -24,7 +24,7 @@ public class DataPoint
 	{
 		return sound;
 	}
-	public boolean isTouch()
+	public boolean getTouch()
 	{
 		return touch;
 	}
