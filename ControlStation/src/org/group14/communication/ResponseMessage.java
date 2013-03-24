@@ -6,7 +6,7 @@ public class ResponseMessage extends Message
 	private Object[] valueArray;
 	private Object singleValue;
 	private ResponseType response;
-	
+		
 	private ResponseMessage(ResponseType response, Object value)
 	{
 		//TODO
