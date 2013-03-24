@@ -14,6 +14,9 @@ public class InformationHandler
 	private DataPoint currentData;
 	private List<DataPoint> dataList;
 	
+	/**
+	 * The constructor for InformationHandler: created upon 
+	 */
 	public InformationHandler()
 	{
 		//TODO
