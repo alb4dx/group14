@@ -1,4 +1,4 @@
-package org.group14.communication;
+package control.communication;
 
 public class ResponseMessage extends Message
 {
