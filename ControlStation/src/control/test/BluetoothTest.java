@@ -1,10 +1,8 @@
 package control.test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.util.Scanner;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -21,6 +19,7 @@ public class BluetoothTest
 		
 		NXTComm nxtComm = null;
 		InputStream in = null;
+		Scanner scan = new Scanner(System.in);
 		
 		try
 		{
@@ -71,15 +70,18 @@ public class BluetoothTest
 			e1.printStackTrace();
 		}
 		
-		System.out.println("Message acquired! Waiting to send...");
+		System.out.println("Message received!");
 		
 		// BluetoothTest.sleep(5);
+		System.out.print("Enter a message to be sent: ");
+		
+		String msg = scan.nextLine();
 		
 		System.out.println("Sending message...");
 		
 		try
 		{
-			nxtComm.write("Hello World".getBytes());
+			nxtComm.write(msg.getBytes());
 		}
 		catch (IOException e)
 		{
@@ -87,7 +89,7 @@ public class BluetoothTest
 			e.printStackTrace();
 		}
 		
-		System.out.println("Message sent, waiting...");
+		System.out.println("Message sent!");
 		
 		// BluetoothTest.sleep(5);
 		
@@ -97,11 +99,11 @@ public class BluetoothTest
 		}
 		catch (IOException e)
 		{
-			System.err.println("Could not close nxt comm. WTF?");
+			System.err.println("Could not close NXT Comm. How did this happen??");
 			e.printStackTrace();
 		}
 		
-		System.out.println("Connection closed");
+		System.out.println("Connection closed. Bye!");
 		
 		// done
 	}
