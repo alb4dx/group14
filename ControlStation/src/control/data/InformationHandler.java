@@ -15,7 +15,8 @@ public class InformationHandler
 	private List<DataPoint> dataList;
 	
 	/**
-	 * The constructor for InformationHandler: created upon 
+	 * The constructor for InformationHandler: created upon an
+	 * initialization of a GraphicsInterface object: 
 	 */
 	public InformationHandler()
 	{
