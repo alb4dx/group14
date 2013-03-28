@@ -3,7 +3,11 @@ package control.communication;
  * CommandMessage is a class that encapsulates the required fields for
  * a command message and extends Message
  * @version 1.0 - Build 04/01/2013
- * @author Group14
+ * @author Stephanie Colen
+ * @author Sarina Padilla
+ * @author Hubert Chen
+ * @author Andy Barron
+ * @author John Zambrotta
  *
  */
 public class CommandMessage extends Message
