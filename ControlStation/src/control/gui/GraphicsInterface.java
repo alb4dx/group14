@@ -29,6 +29,8 @@ import control.data.InformationHandler;
  * graph and orientation/heading information by updating the GUI.
  * 
  * @author Steph
+ * 
+ * John was here
  *
  */
 public class GraphicsInterface
