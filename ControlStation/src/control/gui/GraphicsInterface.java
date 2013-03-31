@@ -30,6 +30,7 @@ import control.data.InformationHandler;
  * 
  * @author Steph
  * 
+ * testing 32 bit eclipse!s
  * 
  * John was here
  *
