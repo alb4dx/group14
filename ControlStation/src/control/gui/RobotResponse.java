@@ -1,5 +1,7 @@
 package control.gui;
 
-public class RobotResponse {
+import javax.swing.*;
+
+public class RobotResponse extends JPanel{
 
 }

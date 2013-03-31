@@ -1,5 +1,7 @@
 package control.gui;
 
-public class ProgramVariables {
+import javax.swing.*;
+
+public class ProgramVariables extends JPanel{
 
 }
