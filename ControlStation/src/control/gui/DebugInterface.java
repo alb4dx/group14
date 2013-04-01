@@ -16,7 +16,7 @@ import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import control.test.Controller;
+import control.main.Controller;
 
 public class DebugInterface {
 	
