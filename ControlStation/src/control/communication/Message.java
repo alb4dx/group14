@@ -31,7 +31,7 @@ public abstract class Message
 		for(int i=0; i < messageString.length(); ++i){
 				sum += messageString.charAt(i);
 		}
-		System.out.println("in genCheckSum:"+ ~sum);
+		//System.out.println("in genCheckSum:"+ ~sum);
 		return ~sum;
 	}
 	/**

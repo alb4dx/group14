@@ -59,12 +59,12 @@ public class ResponseMessage extends Message {
 				startCheck + 1, endCheck));
 		int sum = 0;
 		for (int i = 1; i < startCheck; ++i) {
-			System.out.print(responseString.charAt(i));
+			//System.out.print(responseString.charAt(i));
 			sum += responseString.charAt(i);
 		}
-		System.out.println();
-		System.out.println("checksum of message is:" + checkSum);
-		System.out.println("Calculated checksum is:" + ~sum);
+		//System.out.println();
+		//System.out.println("checksum of message is:" + checkSum);
+		//System.out.println("Calculated checksum is:" + ~sum);
 		ResponseMessage msg = new ResponseMessage();
 		if (checkSum + sum != -1) {
 			return null;
@@ -82,7 +82,7 @@ public class ResponseMessage extends Message {
 							responseString.indexOf("|"));
 				}
 			}
-			System.out.println("response parsed is:" + response);
+			//System.out.println("response parsed is:" + response);
 			if (response.compareTo("conn") == 0) {
 				msg.response = ResponseType.CONN;
 				msg.checksum = checkSum;
@@ -135,7 +135,7 @@ public class ResponseMessage extends Message {
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			} else if (response.compareTo("data") == 0) {
-				System.out.println("its a data msg");
+				//System.out.println("its a data msg");
 				msg.response = ResponseType.DATA;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -260,14 +260,14 @@ public class ResponseMessage extends Message {
 	/**
 	 * Get method of value array
 	 * 
-	 * @return valueArray arry of values
+	 * @return valueArray array of values
 	 */
 	public Object[] getValueArray() {
 		return valueArray;
 	}
 
 	/**
-	 * Get method for single alue
+	 * Get method for single value
 	 * 
 	 * @return singleValue single value object
 	 */
