@@ -4,14 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 /**
- * TODO: 
- * action listeners - update table
  * 
  * @author slc4ga
  *
@@ -33,12 +34,10 @@ public class ProgramVariables extends JPanel{
 		variableLabel.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		String[] cols = {"Variable", "Value"};
-		
-		Object[][] variables = {{"Speed", new Integer(5)}, 
-				{"Connection", new Boolean(true)}, {"Orientation", "N"},
-				{"Location", new Integer(5)}, {"Claw Position", new Double(.5)},
-				{"Touch", new Boolean(false)}, {"Ultrasonic", new Integer(12)}, 
-				{"Light", "50%"}, {"Sound", "15%"}, {"Motor A", new Integer(37)},
+		Object[][] variables = {{"Location", new Integer(5)},{"Light", "50%"}, 
+				{"Sound", "15%"}, {"Touch", new Boolean(false)}, {"Claw Position", new Double(.5)},
+				{"Orientation", "N"}, {"Speed", new Integer(5)}, {"Ultrasonic", new Integer(12)}, 
+				{"Connection", new Boolean(true)}, {"Motor A", new Integer(37)},
 				{"Motor B", new Integer(89)}, {"Motor C", new Integer(45)}};
 		myVariables = new Object[variables.length][variables[0].length];
 		for(int x = 0; x < variables.length; x++) {
@@ -46,8 +45,8 @@ public class ProgramVariables extends JPanel{
 				myVariables[x][y] = variables[x][y];
 			}
 		}
-		
-		myTable = new JTable(myVariables, cols);
+		DefaultTableModel tableModel = new DefaultTableModel(myVariables, cols);
+		myTable = new JTable(tableModel);
 		myTable.setFont(new Font("Arial", Font.PLAIN, 13));
 		myTable.setPreferredSize(new Dimension(125, 310));
 		
@@ -56,14 +55,6 @@ public class ProgramVariables extends JPanel{
 			col.setPreferredWidth(20);
 		}
 		myTable.setRowHeight(26);
-		
-		DefaultTableModel tableModel = new DefaultTableModel(myVariables, cols) {
-		    public boolean isCellEditable(int row, int column) {
-		       return false;
-		    }
-		};
-
-		myTable.setModel(tableModel);
 		
 		JScrollPane sp = new JScrollPane(myTable);
 		sp.setPreferredSize(new Dimension(235, 335));
@@ -93,6 +84,15 @@ public class ProgramVariables extends JPanel{
 	
 	public JButton getRequestUpdate() {
 		return requestUpdate;
+	}
+
+	public void update(ArrayList<Object> splits) {
+		for(int x = 0; x < myVariables.length; x++) {
+			//model.setValueAt(splits.get(x), x, 1);
+			myVariables[x][1] = splits.get(x);
+		}
+		DefaultTableModel model = new DefaultTableModel(myVariables, new String[] {"Variable", "Value"} );
+		myTable.setModel(model);
 	}
 
 }

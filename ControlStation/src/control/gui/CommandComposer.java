@@ -6,13 +6,13 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.*;
 
 /**
  * TODO: 
- * change parameter spinner based on command selected(44)
- * actionlisteners
+ * change parameter spinner based on command selected
  * 
  * @author Steph
  *
@@ -48,14 +48,20 @@ public class CommandComposer extends JPanel{
 				} else if(command.equals("Move")) {
 					SpinnerModel model = new SpinnerNumberModel(0, -720, 720, 5);
 					myDegrees.setModel(model);
+					myDegrees.setValue(0);
+					try {
+						myDegrees.commitEdit();
+					} catch (ParseException e1) { }
 					myDegrees.setEnabled(true);
 				} else if(command.equals("Turn")) {
 					SpinnerModel model = new SpinnerNumberModel(0, -180, 180, 5);
 					myDegrees.setModel(model);
+					myDegrees.setValue(0);
 					myDegrees.setEnabled(true);
 				} else if(command.equals("Claw")) {
-					SpinnerNumberModel model = new SpinnerNumberModel(new Double(0.0), new Double(0.0), new Double(1.0), new Double(0.05));	
+					SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 100, 5);	
 					myDegrees.setModel(model);
+					myDegrees.setValue(0);
 					myDegrees.setEnabled(true);
 				} else if(command.equals("Stop")) {
 					myDegrees.setEnabled(false);

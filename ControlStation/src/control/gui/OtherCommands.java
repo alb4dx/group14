@@ -9,8 +9,6 @@ import javax.swing.*;
 
 
 /**
- * TODO:
- * action listeners
  * 
  * @author Steph
  *
@@ -55,8 +53,8 @@ public class OtherCommands extends JPanel{
 		
 	}
 	
-	public boolean getAutonomous() {
-		return autonomous.isSelected();
+	public JCheckBox getAutonomous() {
+		return autonomous;
 	}
 	
 	public JButton getHalt() {
