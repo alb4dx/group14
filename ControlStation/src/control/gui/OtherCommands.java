@@ -36,15 +36,15 @@ public class OtherCommands extends JPanel{
 		
 		halt = new JButton("Halt All Actions");
 		halt.setFont(new Font("Arial", Font.PLAIN, 14));
-		halt.setPreferredSize(new Dimension(235, 35));
+		halt.setPreferredSize(new Dimension(235, 33));
 		
 		power = new JButton("Power Down");
 		power.setFont(new Font("Arial", Font.PLAIN, 14));
-		power.setPreferredSize(new Dimension(235, 35));
+		power.setPreferredSize(new Dimension(235, 33));
 		
 		reset = new JButton("Reset");
 		reset.setFont(new Font("Arial", Font.PLAIN, 14));
-		reset.setPreferredSize(new Dimension(235, 35));
+		reset.setPreferredSize(new Dimension(235, 33));
 		
 		
 		add(otherLabel);

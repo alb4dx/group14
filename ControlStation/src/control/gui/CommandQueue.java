@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
 /**
  * TODO:
@@ -37,13 +40,18 @@ public class CommandQueue extends JPanel{
 		myQueue.setColumns(15);
 		myQueue.setLineWrap(true);
 		myQueue.setEditable(false);
-		myQueue.setPreferredSize(new Dimension(235, 150));
+		//myQueue.setPreferredSize(new Dimension(235, 150));
 		myQueue.setAutoscrolls(true);
 		// add in scroll bars, set auto scroll
 		JScrollPane sp = new JScrollPane(myQueue);
 		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		sp.setPreferredSize(new Dimension(232, 150));
 		
+		DefaultCaret caret = (DefaultCaret)myQueue.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		sp.setAutoscrolls(true); 
+		
+
 		JPanel buttons = new JPanel();
 		buttons.setPreferredSize(new Dimension(235, 40));
 		buttons.setLayout(new FlowLayout(FlowLayout.LEADING, 1, 3));
@@ -53,7 +61,7 @@ public class CommandQueue extends JPanel{
 		myStep.setPreferredSize(new Dimension(77, 35));
 		
 		myExecute = new JButton("Execute");
-		myExecute.setFont(new Font("Arial", Font.PLAIN, 13));
+		myExecute.setFont(new Font("Arial", Font.PLAIN, 12));
 		myExecute.setPreferredSize(new Dimension(77, 35));
 		
 		myDelete = new JButton("Delete");

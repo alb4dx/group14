@@ -4,12 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
 /**
  * TODO: 
- * actual commands that should be in commandList (34)
  * change parameter spinner based on command selected(44)
  * actionlisteners
  * 
@@ -33,11 +34,40 @@ public class CommandComposer extends JPanel{
 		composerLabel = new JLabel("Command Composer");
 		composerLabel.setFont(new Font("Arial", Font.BOLD, 15));
 		
-		String[] commands = {"Motor A forwards", "Motor B forwards"};
+		String[] commands = {"Init", "Move", "Turn", "Claw", "Stop", "Query", "Quit", "Acknowledge"};
 		commandList = new JComboBox(commands);
 		commandList.setFont(new Font("Arial", Font.PLAIN, 13));
 		commandList.setPreferredSize(new Dimension(235, 40));
 		commandList.setEditable(false);
+		commandList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				String command = (String) cb.getSelectedItem();
+				if(command.equals("Init")) {
+					myDegrees.setEnabled(false);	
+				} else if(command.equals("Move")) {
+					SpinnerModel model = new SpinnerNumberModel(0, -720, 720, 5);
+					myDegrees.setModel(model);
+					myDegrees.setEnabled(true);
+				} else if(command.equals("Turn")) {
+					SpinnerModel model = new SpinnerNumberModel(0, -180, 180, 5);
+					myDegrees.setModel(model);
+					myDegrees.setEnabled(true);
+				} else if(command.equals("Claw")) {
+					SpinnerNumberModel model = new SpinnerNumberModel(new Double(0.0), new Double(0.0), new Double(1.0), new Double(0.05));	
+					myDegrees.setModel(model);
+					myDegrees.setEnabled(true);
+				} else if(command.equals("Stop")) {
+					myDegrees.setEnabled(false);
+				} else if(command.equals("Query")) {
+					myDegrees.setEnabled(false);	
+				} else if(command.equals("Quit")) {
+					myDegrees.setEnabled(false);	
+				} else if(command.equals("Acknowledge")) {
+					myDegrees.setEnabled(false);
+				}
+			}
+		});
 		
 		JLabel params = new JLabel("  Parameter");
 		params.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -47,6 +77,7 @@ public class CommandComposer extends JPanel{
 		myDegrees.setFont(new Font("Arial", Font.PLAIN, 13));
 		myDegrees.setPreferredSize(new Dimension(90, 30));
 		myDegrees.setEditor(new JSpinner.DefaultEditor(myDegrees));
+		myDegrees.setEnabled(false);
 		
 		myTimestamp = new JCheckBox("Include Timestamp");
 		myTimestamp.setFont(new Font("Arial", Font.PLAIN, 13));	
