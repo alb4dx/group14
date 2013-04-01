@@ -1,0 +1,44 @@
+package control.communication;
+
+import control.communication.CommandMessage.CommandType;
+
+public class MessageTest {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		//CommandMessage msg = new CommandMessage(CommandType.INIT);
+		/*CommandMessage msg = new CommandMessage(CommandType.CLAW, 0.25);
+		//int msgCheck=0;
+		//for(int i=0; i<msg.messageString.length();++i){
+			//msgCheck +=msg.messageString.charAt(i);
+		//}
+		//System.out.println("command Message checksum(recieving side) is:"+~msgCheck);
+		System.out.println("messageString:"+msg.getMessageString());
+		System.out.println("formattedString:"+msg.getFormattedMessage());
+		System.out.println("SeqNum:"+msg.getSeqNum());
+		System.out.println("command:"+msg.getCommand());
+		CommandMessage msg2 = new CommandMessage(CommandType.TURN, 90);
+		System.out.println("messageString:"+msg2.getMessageString());
+		System.out.println("formattedString:"+msg2.getFormattedMessage());
+		System.out.println("SeqNum:"+msg2.getSeqNum());
+		System.out.println("command:"+msg2.getCommand());*/
+		String responseTest ="0updr&distance:5&light:5&sound:5&touch:1&claw:0.25&heading:5&speed:5&ultrasonic:5&connectionStatus:1&motorA:350&motorB:355&motorC:360";
+		int sum2=0;
+		for(int i=0; i<responseTest.length();++i){
+			sum2 +=responseTest.charAt(i);
+		}
+		System.out.println("Response Checksum:"+~sum2);
+		responseTest +="|"+~sum2;
+		responseTest = "{"+responseTest+"}";
+		ResponseMessage test = new ResponseMessage();
+		test = ResponseMessage.parse(responseTest);
+		//if(test!=null)
+		System.out.println("message string:"+test.messageString+ " "+"formattedString:"+test.formattedMessage);
+		
+		for(int j = 0; j < test.getFieldArray().length; ++j){
+			System.out.println(test.getFieldArray()[j] + test.getValueArray()[j]);
+		}
+	}
+}
