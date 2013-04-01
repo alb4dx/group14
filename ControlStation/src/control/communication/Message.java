@@ -27,8 +27,12 @@ public abstract class Message
 	 */
 	public static int genCheckSum(String messageString)
 	{
-		// TODO implement check sum generation
-		return 0;
+		int sum=0;
+		for(int i=0; i < messageString.length(); ++i){
+				sum += messageString.charAt(i);
+		}
+		System.out.println("in genCheckSum:"+ ~sum);
+		return ~sum;
 	}
 	/**
 	 * Get method for string of message
@@ -59,10 +63,38 @@ public abstract class Message
 	
 	/**
 	 * Get method for checksum. See genCheckSum() method for generating checksum value
-	 * @return checksum integar value of checksum
+	 * @return checksum integer value of checksum
 	 */
 	public final int getChecksum()
 	{
 		return checksum;
+	}
+	/**
+	 *Sets the messageString field to value
+	 * @param value			string messageString field will be set to
+	 */
+	public void setMessageString(String value) {
+		this.messageString = value;
+	}
+	/**
+	 *Sets the formattedMessage field to value
+	 * @param value			string formattedMessage field will be set to
+	 */
+	public void setFormattedMessage(String value) {
+		this.formattedMessage = value;
+	}
+	/**
+	 *Sets the seqNum field to 
+	 * @param value			string seqNum field will be set to
+	 */
+	public void setSeqNum(int value) {
+		this.seqNum = value;
+	}
+	/**
+	 *Sets the checksum field to value
+	 * @param value			string checksum field will be set to
+	 */
+	public void setChecksum(int value) {
+		this.checksum = value;
 	}
 }

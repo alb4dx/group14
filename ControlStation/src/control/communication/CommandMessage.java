@@ -22,7 +22,48 @@ public class CommandMessage extends Message
 	 */
 	public CommandMessage(CommandType command)
 	{
-		// TODO
+		this.command=command;
+		this.seqNum = sequenceNumber;
+		if(sequenceNumber==0){
+			sequenceNumber=1;
+		}
+		else{
+			sequenceNumber=0;
+		}
+		this.messageString = ""+this.seqNum;
+		if(this.command == CommandType.INIT){
+			this.messageString += "init";
+		}
+		else if(this.command == CommandType.STOP){
+			this.messageString +="stop";
+		}
+		else if(this.command == CommandType.QUERY){
+			this.messageString +="query";
+		}
+		else if(this.command == CommandType.QUIT){
+			this.messageString +="quit";
+		}
+		else if(this.command == CommandType.ACK){
+			this.messageString +="ack";
+		}
+		else if(this.command == CommandType.AUTO){
+			this.messageString +="auto";
+		}
+		else if(this.command == CommandType.HALT){
+			this.messageString +="halt";
+		}
+		else if(this.command == CommandType.POWD){
+			this.messageString +="powd";
+		}
+		else if(this.command == CommandType.RSET){
+			this.messageString +="rset";
+		}
+		else if(this.command == CommandType.UPDT){
+			this.messageString +="updt";
+		}
+		int checkSum = genCheckSum(this.messageString);
+		this.checksum = checkSum;
+		this.formattedMessage = "{"+this.messageString+"|"+checkSum+"}";
 	}
 	
 	/**
@@ -33,9 +74,45 @@ public class CommandMessage extends Message
 	 */
 	public CommandMessage(CommandType command, Object param)
 	{
-		// TODO
+		this.command=command;
+		this.param=param;
+		this.seqNum = sequenceNumber;
+		if(sequenceNumber==0){
+			sequenceNumber=1;
+		}
+		else{
+			sequenceNumber=0;
+		}
+		this.messageString = ""+this.seqNum;
+		if(this.command == CommandType.MOVE){
+			this.messageString += "move";
+		}
+		else if(this.command == CommandType.TURN){
+			this.messageString +="turn";
+		}
+		else if(this.command == CommandType.CLAW){
+			this.messageString +="claw";
+		}
+		this.messageString = this.messageString +":"+param;
+		int checkSum = genCheckSum(this.messageString);
+		this.checksum = checkSum;
+		this.formattedMessage = "{"+this.messageString + "|"+checkSum+"}";
 	}
-	
+	/**
+	 * Set param field to param
+	 * @param param			value param field is set to
+	 */
+	public void setParam(Object param) {
+		this.param = param;
+	}
+	/**
+	 * Set command field to command
+	 * @param command			value command field is set to
+	 */
+	public void setCommand(CommandType command) {
+		this.command = command;
+	}
+
 	/**
 	 * Getter method for Object param
 	 * @return					Returns object that CommandMessage is based on
@@ -56,12 +133,12 @@ public class CommandMessage extends Message
 	
 	/**
 	 * CommandType is an enumerated list of Command Types
-	 * Commands include: INIT, MOVE, TURN, CLAW, STOP, QUERY, QUIT, ACK	
+	 * Commands include: INIT, MOVE, TURN, CLAW, STOP, QUERY, QUIT, ACK, AUTO, HALT, POWD, RSET, UP	
 	 * @author Group14
 	 *
 	 */
 	public enum CommandType
 	{
-		INIT, MOVE, TURN, CLAW, STOP, QUERY, QUIT, ACK
+		INIT, MOVE, TURN, CLAW, STOP, QUERY, QUIT, ACK, AUTO, HALT, POWD, RSET, UPDT
 	}
 }
