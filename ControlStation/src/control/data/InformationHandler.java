@@ -1,5 +1,13 @@
 package control.data;
-
+import org.jfree.data.general.Dataset;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.color.*;
@@ -12,7 +20,7 @@ import lejos.robotics.Color;
  * @author Stephanie Colen
  * @author Sarina Padilla
  * @author Hubert Chen
- * @author Andy Barron
+ * @author Andy Barron 
  * @author John Zambrotta
  *
  */
@@ -22,7 +30,7 @@ public class InformationHandler
 	private float claw;
 	private int heading;
 	private int speed;
-	private JPanel graph;
+	private ChartPanel graph;
 	private DataPoint currentData;
 	private ArrayList<DataPoint> dataList;
 	
@@ -37,9 +45,7 @@ public class InformationHandler
 		claw=0;
 		heading=0;
 		speed=0;
-		graph=new JPanel();
-		Color bg=new Color(190,190,190); // turn 190 into constants for r, g, b?
-		//graph.setBackground(bg)
+		graph=null;
 		currentData=null;
 		dataList=new ArrayList<DataPoint>();
 		
@@ -126,7 +132,7 @@ public class InformationHandler
 	 * @param j		Jpanel object of graph to set
 	 */
 	public void setGraph(JPanel j){
-		this.graph=j;
+		this.graph=(ChartPanel)j;
 	}
 	/**
 	 * Set method for current DataPoint
@@ -148,8 +154,11 @@ public class InformationHandler
 	 */
 	public JPanel updateGraph()
 	{
-		//Graph should have data for every XX amount of time (check spec docs) 
-		//for each telemetry type and put them 
+		XYDataset dataset=new XYSeriesCollection();
+		JFreeChart chart=null;
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new java.awt.Dimension(600,400)); //*** what should these values be?
+		setContentPane(chartPanel);
 		
 		//Y axis - should update if a data value exceeds the max
 		//		default == 100
@@ -159,19 +168,13 @@ public class InformationHandler
 		
 		//Key    - shows which each colored line means as well as T/Fs 
 		
-		//if(
-		//spot 1 - oldest data - dataList[1]
-		//spot 2
-		//spot 3
-		//spot 4
-		//spot 5
-		//spot 6
-		//spot 7
-		//spot 8
-		//spot 9
-		//spot 10 - newest data - dataList[10]
+		dataset.addSeries(this.createLightSeries());
+		dataset.addSeries(this.createSoundSeries());
+		dataset.addSeries(this.createUltrasonicSeries());
 		
-		return graph;
+		chart = createChart(dataset);
+		
+		return chartPanel;
 	}
 	
 	/**
@@ -191,4 +194,76 @@ public class InformationHandler
 		dataList.add(currentData);
 		
 	}// end addData function
-}
+	
+	//Create XY series of Light data
+	private XYSeries createLightSeries(){
+		
+		XYSeries lightSeries = new XYSeries("Light");
+		int first=dataList.size();
+		
+		for(int i=first;i>0;i--){
+			lightSeries.add(i,dataList.get(i).getLight());
+		}
+		return(lightSeries);
+	}
+	
+	//Create XY series of sound data
+	private XYSeries createSoundSeries(){
+		
+		XYSeries soundSeries = new XYSeries("Sound");
+		int first = dataList.size();
+		
+		for(int i=first;i>0;i--){
+			soundSeries.add(i,dataList.get(i).getSound());
+		}
+		return (soundSeries);
+	}
+	
+	//Create XY series of Ultrasonic (US) data
+	private XYSeries createUltrasonicSeries(){
+		
+		XYSeries uSonicSeries = new XYSeries("Ultrasonic");
+		int first = dataList.size();
+		
+		for(int i=first;i>0;i--){
+			uSonicSeries.add(i,dataList.get(i).getSound());
+		}
+		return(uSonicSeries);
+	}
+	
+	private void createChart(XYDataset dataset){
+		
+		chart = ChartFactory.createXYLineChart(
+				"Telemtry Log",	// chart title
+				"X",			// x axis label
+				"Y",			// y axis label
+				dataset,		// data
+				PlotOrientation.VERTICAL,
+				true,			// include legend
+				true,			// tool tips
+				false			// urls
+				);
+		
+		//Chart Customization
+		
+		chart.setBackgroundPaint(Color.WHITE);
+		//StandardLegend legend = (StandardLegend) chart.getLegend();
+		//legend.setDisplaySeriesShapes(true);
+		
+		XYPlot plot = chart.getXYPlot();
+		plot.setBackgroundPaint(Color.LIGHT_GRAY);
+		//plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0,5.0,5.0,5.0);
+		plot.setDomainGridlinePaint(Color.WHITE);
+		plot.setRangeGridlinePaint(Color.WHITE);
+		
+		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		renderer.setSeriesLinesVisible(0, false);
+		renderer.setSeriesShapesVisible(1, false);
+		plot.setRenderer(renderer);
+		
+		NumberAxis ragneAxis = (NumberAxis) plot.getRangeAxis();
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits(NumberAxis.createIntegerTickUnits()));
+		
+		return (chart);
+	}
+}// end Information Handler class
