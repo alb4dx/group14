@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/pctools.jar" sourcepath="lib/pctools-src.zip"/>
 	<classpathentry kind="lib" path="lib/bluecove-gpl.jar"/>
 	<classpathentry kind="lib" path="lib/bluecove.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
