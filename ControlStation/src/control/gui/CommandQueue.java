@@ -10,6 +10,8 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
+import control.communication.CommandMessage;
+
 /**
  * TODO:
  * action listeners
@@ -92,6 +94,11 @@ public class CommandQueue extends JPanel{
 	
 	public JButton getDelete() {
 		return myDelete;
+	}
+
+	public void addMessage(CommandMessage s) {
+		// TODO add command message to displayed JLIST 
+		
 	}
 
 }

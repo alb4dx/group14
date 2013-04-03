@@ -10,6 +10,8 @@ import java.text.ParseException;
 
 import javax.swing.*;
 
+import control.communication.CommandMessage;
+
 /**
  * TODO: 
  * change parameter spinner based on command selected

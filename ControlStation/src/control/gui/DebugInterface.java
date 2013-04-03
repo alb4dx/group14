@@ -157,10 +157,7 @@ public class DebugInterface {
 	
 	public void updateVariables(ResponseMessage r) {
 		// update variables in myVariables
-		/*// HOW do I get the robot response message with all the telemetry?
-		String response = "{0updr&distance:5&light:5&sound:5&touch:false&claw:" +
-				".5&heading:90&speed:5&ultrasonic:5&connectionStatus:true&motorA:" +
-				"37&motorB:65&motorC:48|709}";
+		String response = r.getFormattedMessage(); // message with curly braces
 		String[] groups = response.split("&");
 		ArrayList<Object> splits = new ArrayList<Object>();
 		for(int x = 1; x < groups.length; x++) {
@@ -175,7 +172,11 @@ public class DebugInterface {
 			}
 		}
 		System.out.println(splits);
-		myVariables.update(splits);*/
+		myVariables.update(splits);
+	}
+	
+	public CommandQueue getQueue() {
+		return myQueue;
 	}
 
 }
