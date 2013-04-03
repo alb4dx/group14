@@ -71,6 +71,7 @@ public class Controller {
 		} else {
 			messageQueue.add(s);
 		}
+		myDebug.getQueue().addMessage(s);
 	}
 	
 	public void onMessageReceive(ResponseMessage r) {
