@@ -8,6 +8,13 @@ import javax.swing.JOptionPane;
 import control.main.Controller;
 
 
+/**
+ * Runnable class to listen for messages and pass them to the controller. To be
+ * passed into a Thread.
+ * 
+ * @author Andy Barron
+ * 
+ */
 public class MessageListener implements Runnable
 {
 	
