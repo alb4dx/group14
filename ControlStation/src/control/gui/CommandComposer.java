@@ -23,7 +23,7 @@ public class CommandComposer extends JPanel{
 	private JLabel composerLabel;
 	private JComboBox commandList;
 	private JSpinner myDegrees;
-	private JCheckBox myTimestamp;
+	//private JCheckBox myTimestamp;
 	private JButton sendCommand;
 	
 	public CommandComposer() {
@@ -85,8 +85,8 @@ public class CommandComposer extends JPanel{
 		myDegrees.setEditor(new JSpinner.DefaultEditor(myDegrees));
 		myDegrees.setEnabled(false);
 		
-		myTimestamp = new JCheckBox("Include Timestamp");
-		myTimestamp.setFont(new Font("Arial", Font.PLAIN, 13));	
+		//myTimestamp = new JCheckBox("Include Timestamp");
+		//myTimestamp.setFont(new Font("Arial", Font.PLAIN, 13));	
 		
 		sendCommand = new JButton("Send Command");
 		sendCommand.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -96,7 +96,7 @@ public class CommandComposer extends JPanel{
 		add(commandList);
 		add(params);
 		add(myDegrees);
-		add(myTimestamp);
+		//add(myTimestamp);
 		add(sendCommand);
 		
 	}
@@ -109,9 +109,9 @@ public class CommandComposer extends JPanel{
 		return myDegrees;
 	}
 	
-	public boolean getTimestamp() {
+	/*public boolean getTimestamp() {
 		return myTimestamp.isSelected();
-	}
+	}*/
 	
 	public JButton getSendButton() {
 		return sendCommand;
