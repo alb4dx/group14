@@ -19,9 +19,10 @@ import control.communication.CommandMessage.CommandType;
  * 
  * extract (graphics interface) - takes all info from info handler and displays on GUI (refresh calls extract)
  * goals for this prototype - movement, claw, follows safety protocol / disconnects, 
- * movement commands with WAD (forward, backward, turning) press and hold says go, letting go says stop
+ * keylistener in controller - hard code message - movement commands with WAD (forward, backward, turning) press and hold says go, letting go says stop
  * W - move at 1 rev / s (360 degrees) 
  * A/D - turns by 30 degrees 
+ * 
  * controller sends received messages from messageListener to private DebugInterface
  * controller sends command messages from DebugInterface and 
  *
