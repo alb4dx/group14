@@ -8,7 +8,7 @@ import lejos.pc.comm.NXTComm;
 import control.main.Controller;
 
 /**
- * Runnable class to send messages. To be passed to a Thread.
+ * Runnable class to send messages. To be passed to an instance of java.lang.Thread
  * @author Andy Barron
  *
  */
@@ -62,6 +62,26 @@ public class MessageSender implements Runnable
 			}
 			
 		}
+	}
+
+	public NXTComm getOutputSender()
+	{
+		return outputSender;
+	}
+
+	public void setOutputSender(NXTComm outputSender)
+	{
+		this.outputSender = outputSender;
+	}
+
+	public Controller getMyController()
+	{
+		return myController;
+	}
+
+	public void setMyController(Controller myController)
+	{
+		this.myController = myController;
 	}
 	
 }

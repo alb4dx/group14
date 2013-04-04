@@ -261,7 +261,7 @@ public class InformationHandler
 		renderer.setSeriesShapesVisible(1, false);
 		plot.setRenderer(renderer);
 		
-		NumberAxis ragneAxis = (NumberAxis) plot.getRangeAxis();
+		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits(NumberAxis.createIntegerTickUnits()));
 		
 		return (chart);
