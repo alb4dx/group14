@@ -13,21 +13,23 @@ package control.communication;
  * @author John Zambrotta
  * 
  */
-public class ResponseMessage extends Message {
-	private String[] fieldArray;
-	private Object[] valueArray;
-	private Object singleValue;
-	private ResponseType response;
-
+public class ResponseMessage extends Message
+{
+	private String[]		fieldArray;
+	private Object[]		valueArray;
+	private Object			singleValue;
+	private ResponseType	response;
+	
 	/**
 	 * constructor to create Response Message based on response
 	 * 
 	 */
-	public ResponseMessage() {
+	public ResponseMessage()
+	{
 		this.singleValue = "";
 		this.response = null;
 	}
-
+	
 	/**
 	 * Three parameter constructor to define response message by response type,
 	 * array of fields and array of values
@@ -43,7 +45,7 @@ public class ResponseMessage extends Message {
 	 * private ResponseMessage(ResponseType response, String[] fields, Object[]
 	 * values) { //TODO }
 	 */
-
+	
 	/**
 	 * Parses a response String*
 	 * 
@@ -52,38 +54,61 @@ public class ResponseMessage extends Message {
 	 * @return null if message is corrupted
 	 * @return msg if message is valid
 	 */
-	public static ResponseMessage parse(String responseString) {
+	public static ResponseMessage parse(String responseString)
+	{
 		int startCheck = responseString.indexOf("|");
 		int endCheck = responseString.indexOf("}");
-		int checkSum = Integer.parseInt(responseString.substring(
-				startCheck + 1, endCheck));
+		int checkSum = 0;
+		
+		try
+		{
+			checkSum = Integer.parseInt(responseString.substring(
+					startCheck + 1, endCheck));
+		}
+		catch (NumberFormatException e) // if we can't even parse the checksum,
+										// return null
+		{
+			return null;
+		}
+		
 		int sum = 0;
-		for (int i = 1; i < startCheck; ++i) {
-			//System.out.print(responseString.charAt(i));
+		for (int i = 1; i < startCheck; ++i)
+		{
+			// System.out.print(responseString.charAt(i));
 			sum += responseString.charAt(i);
 		}
-		//System.out.println();
-		//System.out.println("checksum of message is:" + checkSum);
-		//System.out.println("Calculated checksum is:" + ~sum);
+		// System.out.println();
+		// System.out.println("checksum of message is:" + checkSum);
+		// System.out.println("Calculated checksum is:" + ~sum);
 		ResponseMessage msg = new ResponseMessage();
-		if (checkSum + sum != -1) {
+		if (checkSum + sum != -1)
+		{
 			return null;
-		} else {
+		}
+		else
+		{
 			int endCommand = responseString.indexOf(":");
 			int ampersand = responseString.indexOf("&");
 			String response = "";
-			if (ampersand != -1) {
+			if (ampersand != -1)
+			{
 				response = responseString.substring(2, ampersand);
-			} else {
-				if (endCommand != -1) {
+			}
+			else
+			{
+				if (endCommand != -1)
+				{
 					response = responseString.substring(2, endCommand);
-				} else {
+				}
+				else
+				{
 					response = responseString.substring(2,
 							responseString.indexOf("|"));
 				}
 			}
-			//System.out.println("response parsed is:" + response);
-			if (response.compareTo("conn") == 0) {
+			// System.out.println("response parsed is:" + response);
+			if (response.compareTo("conn") == 0)
+			{
 				msg.response = ResponseType.CONN;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -91,14 +116,17 @@ public class ResponseMessage extends Message {
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			if (response.compareTo("nack") == 0) {
+			if (response.compareTo("nack") == 0)
+			{
 				msg.response = ResponseType.NACK;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("ack") == 0) {
+			}
+			else if (response.compareTo("ack") == 0)
+			{
 				msg.response = ResponseType.ACK;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -107,7 +135,9 @@ public class ResponseMessage extends Message {
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("done") == 0) {
+			}
+			else if (response.compareTo("done") == 0)
+			{
 				msg.response = ResponseType.DONE;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -116,7 +146,9 @@ public class ResponseMessage extends Message {
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("fail") == 0) {
+			}
+			else if (response.compareTo("fail") == 0)
+			{
 				msg.response = ResponseType.FAIL;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck - 1);
@@ -125,7 +157,9 @@ public class ResponseMessage extends Message {
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("error") == 0) {
+			}
+			else if (response.compareTo("error") == 0)
+			{
 				msg.response = ResponseType.ERROR;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -134,16 +168,18 @@ public class ResponseMessage extends Message {
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("data") == 0) {
-				//System.out.println("its a data msg");
+			}
+			else if (response.compareTo("data") == 0)
+			{
+				// System.out.println("its a data msg");
 				msg.response = ResponseType.DATA;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
-				msg.fieldArray = new String[] { "distance:", "light:",
-						"sound:", "touch:", "claw:", "heading:", "speed:",
-						"ultrasonic:" };
+				msg.fieldArray = new String[]
+				{ "distance:", "light:", "sound:", "touch:", "claw:",
+						"heading:", "speed:", "ultrasonic:" };
 				int distance = Integer
 						.parseInt(responseString.substring(endCommand + 1,
 								responseString.indexOf("&", endCommand)));
@@ -157,9 +193,12 @@ public class ResponseMessage extends Message {
 				int touch = Integer.parseInt(responseString.substring(
 						endTouch + 1, responseString.indexOf("&", endTouch)));
 				boolean touching = false;
-				if (touch == 0) {
+				if (touch == 0)
+				{
 					touching = false;
-				} else {
+				}
+				else
+				{
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
@@ -175,19 +214,22 @@ public class ResponseMessage extends Message {
 				int endUltra = responseString.indexOf(":", endSpeed + 1);
 				int ultrasonic = Integer.parseInt(responseString.substring(
 						endUltra + 1, responseString.indexOf("|", endUltra)));
-				msg.valueArray = new Object[] { distance, light, sound,
-						touching, claw, heading, speed, ultrasonic };
+				msg.valueArray = new Object[]
+				{ distance, light, sound, touching, claw, heading, speed,
+						ultrasonic };
 				msg.formattedMessage = responseString;
-			} else if (response.compareTo("updr") == 0) {
+			}
+			else if (response.compareTo("updr") == 0)
+			{
 				msg.response = ResponseType.UPDR;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
 				msg.messageString = responseString.substring(1,
 						responseString.indexOf("|"));
-				msg.fieldArray = new String[] { "distance:", "light:",
-						"sound:", "touch:", "claw:", "heading:", "speed:",
-						"ultrasonic:", "connectionStatus:", "motorA:",
-						"motorB:", "motorC:" };
+				msg.fieldArray = new String[]
+				{ "distance:", "light:", "sound:", "touch:", "claw:",
+						"heading:", "speed:", "ultrasonic:",
+						"connectionStatus:", "motorA:", "motorB:", "motorC:" };
 				int distance = Integer
 						.parseInt(responseString.substring(endCommand + 1,
 								responseString.indexOf("&", endCommand)));
@@ -201,9 +243,12 @@ public class ResponseMessage extends Message {
 				String touch = responseString.substring(endTouch + 1,
 						responseString.indexOf("&", endTouch));
 				boolean touching = false;
-				if (touch.compareTo("0") == 0) {
+				if (touch.compareTo("0") == 0)
+				{
 					touching = false;
-				} else {
+				}
+				else
+				{
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
@@ -224,9 +269,12 @@ public class ResponseMessage extends Message {
 						endConnStat + 1,
 						responseString.indexOf("&", endConnStat)));
 				boolean status = false;
-				if (connStat == 0) {
+				if (connStat == 0)
+				{
 					status = false;
-				} else {
+				}
+				else
+				{
 					status = true;
 				}
 				int endMotorA = responseString.indexOf(":", endConnStat + 1);
@@ -238,52 +286,56 @@ public class ResponseMessage extends Message {
 				int endMotorC = responseString.indexOf(":", endMotorB + 1);
 				int motorC = Integer.parseInt(responseString.substring(
 						endMotorC + 1, responseString.indexOf("|", endMotorC)));
-				msg.valueArray = new Object[] { distance, light, sound,
-						touching, claw, heading, speed, ultrasonic, status,
-						motorA, motorB, motorC };
+				msg.valueArray = new Object[]
+				{ distance, light, sound, touching, claw, heading, speed,
+						ultrasonic, status, motorA, motorB, motorC };
 				msg.formattedMessage = responseString;
 			}
 		}
-
+		
 		return msg;
 	}
-
+	
 	/**
 	 * Get method for field array
 	 * 
 	 * @return fieldArray array of fields
 	 */
-	public String[] getFieldArray() {
+	public String[] getFieldArray()
+	{
 		return fieldArray;
 	}
-
+	
 	/**
 	 * Get method of value array
 	 * 
 	 * @return valueArray array of values
 	 */
-	public Object[] getValueArray() {
+	public Object[] getValueArray()
+	{
 		return valueArray;
 	}
-
+	
 	/**
 	 * Get method for single value
 	 * 
 	 * @return singleValue single value object
 	 */
-	public Object getSingleValue() {
+	public Object getSingleValue()
+	{
 		return singleValue;
 	}
-
+	
 	/**
 	 * Get method for response type
 	 * 
 	 * @return response type of response message
 	 */
-	public ResponseType getResponse() {
+	public ResponseType getResponse()
+	{
 		return response;
 	}
-
+	
 	/**
 	 * Set a specific index in fieldArray to field
 	 * 
@@ -292,10 +344,11 @@ public class ResponseMessage extends Message {
 	 * @param field
 	 *            name of the field in fieldArray
 	 */
-	public void setFieldArray(int index, String field) {
+	public void setFieldArray(int index, String field)
+	{
 		this.fieldArray[index] = field;
 	}
-
+	
 	/**
 	 * Set a specific index in valueArray to field
 	 * 
@@ -304,27 +357,30 @@ public class ResponseMessage extends Message {
 	 * @param field
 	 *            name of the field in valueArray
 	 */
-	public void setValueArray(int index, String field) {
+	public void setValueArray(int index, String field)
+	{
 		this.valueArray[index] = field;
 	}
-
+	
 	/**
 	 * Set singleValue to value
 	 * 
 	 * @param value
 	 *            a message clarifying the response
 	 */
-	public void setSingleValue(Object value) {
+	public void setSingleValue(Object value)
+	{
 		this.singleValue = value;
 	}
-
+	
 	/**
 	 * Enumerated response type to restrict types
 	 * 
 	 * @author Group 14
 	 * 
 	 */
-	public enum ResponseType {
+	public enum ResponseType
+	{
 		CONN, ACK, DONE, FAIL, DATA, ERROR, NACK, UPDR
 	}
 }

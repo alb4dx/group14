@@ -9,11 +9,14 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import control.test.TestComm;
+import control.test.TestToolMessageListener;
+
 
 /**
  * A class to initialize the main frame and all associated properties.
  * 
- * @authorSteph
+ * @author Steph
  */
 public class Driver
 {
@@ -23,6 +26,9 @@ public class Driver
 	@SuppressWarnings("unused")
 	private String			myRobotCommand;	// command randomly generated
 	private String			myReceivedCommand;
+	
+	private TestComm testComm = new TestComm();
+	private TestToolMessageListener lis = new TestToolMessageListener(testComm);
 	
 	@SuppressWarnings("unused")
 	/**
@@ -34,6 +40,7 @@ public class Driver
 	public static void main(String[] args)
 	{
 		Driver driver = new Driver();
+		(new Thread(driver.lis)).start();
 	}
 	
 	/**
@@ -47,19 +54,7 @@ public class Driver
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (ClassNotFoundException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (InstantiationException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (IllegalAccessException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (UnsupportedLookAndFeelException e)
+		catch (Exception e)
 		{
 			System.out.println("Could not load look and feel - continuing");
 		}
@@ -81,7 +76,7 @@ public class Driver
 		myComm.setOutputText("Testing received commands (see text file)");
 		try
 		{
-			Scanner scanner = new Scanner(new File("testcommants.txt"));
+			Scanner scanner = new Scanner(new File("testcommands.txt"));
 			while (scanner.hasNext())
 			{
 				myReceivedCommand = scanner.next();
@@ -122,6 +117,7 @@ public class Driver
 	public void setCommand(String generateCommand)
 	{
 		myRobotCommand = generateCommand;
+		testComm.simulateResponse(generateCommand);
 	}
 	
 	public void validateCommand()

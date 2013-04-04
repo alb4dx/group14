@@ -8,7 +8,7 @@ import java.util.Scanner;
 import control.gui.GraphicsInterface;
 
 
-public class TestTool
+public class TestComm
 {
 	
 	public final Object			lock		= new Object();
@@ -20,11 +20,11 @@ public class TestTool
 	public static void main(String[] args)
 	{
 		new GraphicsInterface();
-		TestTool t = new TestTool();
-		t.launch();
+		TestComm t = new TestComm();
+		t.launchCommandLine();
 	}
 	
-	public void launch()
+	public void launchCommandLine()
 	{
 		System.out.println("Command line test tool now active.");
 		String input = new String();
@@ -55,6 +55,7 @@ public class TestTool
 		}
 		synchronized (lock)
 		{
+			System.out.println("Notifying");
 			lock.notifyAll();
 		}
 	}

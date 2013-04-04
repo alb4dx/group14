@@ -12,9 +12,9 @@ public class TestToolComm implements NXTComm
 {
 
 	
-	private TestTool	testTool;
+	private TestComm	testTool;
 
-	public TestToolComm(TestTool tool)
+	public TestToolComm(TestComm tool)
 	{
 		this.testTool = tool;
 	}
