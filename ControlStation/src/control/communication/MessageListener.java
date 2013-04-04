@@ -48,7 +48,7 @@ public class MessageListener implements Runnable
 	 */
 	private void processMessage(ResponseMessage message)
 	{
-		// TODO what do we do when a message is found in the stream?
+		myController.onMessageReceive(message);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class MessageListener implements Runnable
 	 */
 	private void processInvalidMessage()
 	{
-		
+		myController.resend();
 	}
 	
 	/**

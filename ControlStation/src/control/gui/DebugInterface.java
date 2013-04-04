@@ -51,6 +51,62 @@ public class DebugInterface {
 		
 	}
 	
+	public static CommandQueue getMyQueue() {
+		return myQueue;
+	}
+
+	public static void setMyQueue(CommandQueue myQueue) {
+		DebugInterface.myQueue = myQueue;
+	}
+
+	public static CommandComposer getMyComposer() {
+		return myComposer;
+	}
+
+	public static void setMyComposer(CommandComposer myComposer) {
+		DebugInterface.myComposer = myComposer;
+	}
+
+	public static OtherCommands getMyOther() {
+		return myOther;
+	}
+
+	public static void setMyOther(OtherCommands myOther) {
+		DebugInterface.myOther = myOther;
+	}
+
+	public static ProgramVariables getMyVariables() {
+		return myVariables;
+	}
+
+	public static void setMyVariables(ProgramVariables myVariables) {
+		DebugInterface.myVariables = myVariables;
+	}
+
+	public static RobotResponse getMyResponse() {
+		return myResponse;
+	}
+
+	public static void setMyResponse(RobotResponse myResponse) {
+		DebugInterface.myResponse = myResponse;
+	}
+
+	public Controller getMyController() {
+		return myController;
+	}
+
+	public void setMyController(Controller myController) {
+		this.myController = myController;
+	}
+
+	public JFrame getMyFrame() {
+		return myFrame;
+	}
+
+	public void setMyFrame(JFrame myFrame) {
+		this.myFrame = myFrame;
+	}
+
 	public DebugInterface(Controller contr) {
 		JFrame frame = new JFrame("ROBOT DEBUGGER");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
