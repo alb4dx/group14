@@ -46,16 +46,16 @@ public class MessageListener implements Runnable
 	 * 
 	 * @param message
 	 */
-	private void processMessage(ResponseMessage message)
+	protected void processMessage(ResponseMessage message)
 	{
 		myController.onMessageReceive(message);
 	}
 	
 	/**
-	 * Method that dictates behavior for when we have received an invalid
-	 * message
+	 * Message that dictates what to do with a corrupted/invalid message
+	 * @param str The invalid character string 
 	 */
-	private void processInvalidMessage()
+	protected void processInvalidMessage(String str)
 	{
 		myController.resend();
 	}
@@ -92,8 +92,9 @@ public class MessageListener implements Runnable
 			
 			if (startBracket != CHAR_NOT_FOUND && endBracket != CHAR_NOT_FOUND)
 			{
-				ResponseMessage response = ResponseMessage.parse(charQueue
-						.substring(startBracket, endBracket + 1));
+				String str = charQueue
+						.substring(startBracket, endBracket + 1);
+				ResponseMessage response = ResponseMessage.parse(str);
 				
 				if (response != null) // if valid message, process
 				{
@@ -102,7 +103,7 @@ public class MessageListener implements Runnable
 				else
 				// if invalid message, do stuff
 				{
-					processInvalidMessage();
+					processInvalidMessage(str);
 				}
 				
 				charQueue.delete(startBracket, endBracket + 1);
