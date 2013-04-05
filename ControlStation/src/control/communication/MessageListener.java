@@ -2,6 +2,7 @@ package control.communication;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -74,13 +75,14 @@ public class MessageListener implements Runnable
 			
 			// read from string to buffer, then append buffer to queue
 			
-			int len = inputListener.read(buffer);
+			/*int len = inputListener.read(buffer);
 			if (len == -1) break; // if end of stream is reached
 				
 			for (int i = 0; i < len; i++)
 			{
 				charQueue.append((char) buffer[i]);
-			}
+			}*/
+			
 			
 			// find { and }
 			

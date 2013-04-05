@@ -1,5 +1,6 @@
 package control.data;
 import org.jfree.data.general.Dataset;
+
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartFactory;
