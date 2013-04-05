@@ -8,12 +8,15 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.*;
+
 import java.util.List;
 import java.util.ArrayList;
+import java.awt.Dimension;
+import java.awt.Paint;
 import java.awt.color.*;
 import javax.swing.JPanel;
 
-import lejos.robotics.Color;
+import java.awt.Color;
 /**
  * Used to hold all of the data received from the robot and does any necessary calculations
  * @version 1.0 - Build 04/01/2013
@@ -30,7 +33,7 @@ public class InformationHandler
 	private float claw;
 	private int heading;
 	private int speed;
-	private ChartPanel graph;
+	private JFreeChart graph;
 	private DataPoint currentData;
 	private ArrayList<DataPoint> dataList;
 	
@@ -82,7 +85,7 @@ public class InformationHandler
 	 * Get method for telemetry data graph
 	 * @return JPanel of current graph
 	 */
-	public JPanel getGraph(){
+	public JFreeChart getGraph(){
 		return graph;
 	}
 	/**
@@ -131,8 +134,8 @@ public class InformationHandler
 	 * Set method for graph 
 	 * @param j		Jpanel object of graph to set
 	 */
-	public void setGraph(JPanel j){
-		this.graph=(ChartPanel)j;
+	public void setGraph(JFreeChart j){
+		this.graph=j;
 	}
 	/**
 	 * Set method for current DataPoint
@@ -155,10 +158,8 @@ public class InformationHandler
 	public JPanel updateGraph()
 	{
 		XYDataset dataset=new XYSeriesCollection();
-		JFreeChart chart=null;
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(600,400)); //*** what should these values be?
-		setContentPane(chartPanel);
+		
+		//setContentPane(chartPanel);
 		
 		//Y axis - should update if a data value exceeds the max
 		//		default == 100
@@ -168,9 +169,14 @@ public class InformationHandler
 		
 		//Key    - shows which each colored line means as well as T/Fs 
 		
-		dataset.addSeries(this.createLightSeries());
-		dataset.addSeries(this.createSoundSeries());
-		dataset.addSeries(this.createUltrasonicSeries());
+		((XYSeriesCollection) dataset).addSeries(this.createLightSeries());
+		((XYSeriesCollection) dataset).addSeries(this.createSoundSeries());
+		((XYSeriesCollection) dataset).addSeries(this.createUltrasonicSeries());
+		((XYSeriesCollection) dataset).addSeries(this.createTouchSeries());
+		
+		JFreeChart chart = createChart(dataset);
+		ChartPanel chartPanel = new ChartPanel(chart, false);
+		chartPanel.setPreferredSize(new Dimension(450, 200)); 
 		
 		chart = createChart(dataset);
 		
@@ -199,7 +205,7 @@ public class InformationHandler
 	private XYSeries createLightSeries(){
 		
 		XYSeries lightSeries = new XYSeries("Light");
-		int first=dataList.size();
+		int first=dataList.size() - 1;
 		
 		for(int i=first;i>0;i--){
 			lightSeries.add(i,dataList.get(i).getLight());
@@ -211,7 +217,7 @@ public class InformationHandler
 	private XYSeries createSoundSeries(){
 		
 		XYSeries soundSeries = new XYSeries("Sound");
-		int first = dataList.size();
+		int first = dataList.size() - 1;
 		
 		for(int i=first;i>0;i--){
 			soundSeries.add(i,dataList.get(i).getSound());
@@ -223,20 +229,28 @@ public class InformationHandler
 	private XYSeries createUltrasonicSeries(){
 		
 		XYSeries uSonicSeries = new XYSeries("Ultrasonic");
-		int first = dataList.size();
+		int first = dataList.size() - 1;
 		
 		for(int i=first;i>0;i--){
-			uSonicSeries.add(i,dataList.get(i).getSound());
+			uSonicSeries.add(i,dataList.get(i).getUltrasonic());
 		}
 		return(uSonicSeries);
 	}
 	
-	private void createChart(XYDataset dataset){
+	private XYSeries createTouchSeries() {
+		XYSeries touchSeries = new XYSeries("Touch");
+		for(int i = dataList.size() - 1; i > 0; i--) {
+			touchSeries.add(i, dataList.get(i).getTouch());
+		}
+		return (touchSeries);
+	}
+	
+	private JFreeChart createChart(XYDataset dataset){
 		
-		chart = ChartFactory.createXYLineChart(
+		graph = ChartFactory.createXYLineChart(
 				"Telemtry Log",	// chart title
-				"X",			// x axis label
-				"Y",			// y axis label
+				"Data Point",			// x axis label
+				"Sensor Reading",			// y axis label
 				dataset,		// data
 				PlotOrientation.VERTICAL,
 				true,			// include legend
@@ -246,24 +260,22 @@ public class InformationHandler
 		
 		//Chart Customization
 		
-		chart.setBackgroundPaint(Color.WHITE);
+		graph.setBackgroundPaint(Color.WHITE);
 		//StandardLegend legend = (StandardLegend) chart.getLegend();
 		//legend.setDisplaySeriesShapes(true);
 		
-		XYPlot plot = chart.getXYPlot();
+		XYPlot plot = (XYPlot) graph.getXYPlot();
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
 		//plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0,5.0,5.0,5.0);
 		plot.setDomainGridlinePaint(Color.WHITE);
 		plot.setRangeGridlinePaint(Color.WHITE);
 		
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-		renderer.setSeriesLinesVisible(0, false);
-		renderer.setSeriesShapesVisible(1, false);
 		plot.setRenderer(renderer);
 		
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits(NumberAxis.createIntegerTickUnits()));
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		
-		return (chart);
+		return graph;
 	}
 }// end Information Handler class

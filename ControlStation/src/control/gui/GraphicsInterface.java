@@ -15,6 +15,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 
+import org.jfree.chart.ChartPanel;
+
 import control.data.InformationHandler;
 
 /**
@@ -38,7 +40,7 @@ import control.data.InformationHandler;
 public class GraphicsInterface
 {
 	private JFrame				myFrame;			// The frame encompassing the whole GUI
-	private JPanel				dataGraph;			// The graph displaying past and present telemetry data
+	private ChartPanel			dataGraph;			// The graph displaying past and present telemetry data
 	private JLabel				errorLabel;			// The label for the error section heading
 	private JLabel				locationLabel;		// The label for the location section heading
 	private JLabel				orientationLabel;  	// The label for the orientation section heading
@@ -53,6 +55,8 @@ public class GraphicsInterface
 	 * all the GUI components and displays myFrame to the user.
 	 */
 	public GraphicsInterface() {
+		
+		myInfo = new InformationHandler();
 		
 		myFrame = new JFrame("Robot Control Station");
 		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,9 +76,9 @@ public class GraphicsInterface
 		content.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 		content.setPreferredSize(new Dimension(600, 500));
 		 
-		dataGraph = new JPanel();
+		dataGraph = (ChartPanel) myInfo.updateGraph();
 		dataGraph.setPreferredSize(new Dimension(450, 200));
-		dataGraph.setBackground(Color.blue);
+		//dataGraph.setBackground(Color.blue);
 	
 		errorLabel = new JLabel("Error Log:");
 		errorLabel.setFont(new Font("Arial", Font.BOLD, 14));
