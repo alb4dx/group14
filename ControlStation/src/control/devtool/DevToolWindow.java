@@ -26,7 +26,7 @@ public class DevToolWindow
 	private String			myRobotCommand;	// command randomly generated
 	private String			myReceivedCommand;
 	
-	public final RobotSimulator robotSim = new RobotSimulator();
+	public RobotSimulator robotSim = null;
 	
 	@SuppressWarnings("unused")
 	/**
@@ -66,6 +66,8 @@ public class DevToolWindow
 		myTelem = new TelemetryPanel(this);
 		myContent.add(myComm);
 		myContent.add(myTelem);
+		robotSim = new RobotSimulator(this);
+		
 		// Set content pane, make visible, and prevent resizing
 		myFrame.setContentPane(myContent);
 		myFrame.setVisible(true);

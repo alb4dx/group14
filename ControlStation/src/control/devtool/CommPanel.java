@@ -126,37 +126,7 @@ public class CommPanel extends JPanel
 		commLabel.setFont(new Font("Arial", Font.BOLD, 18));
 		JPanel fillerPanel = new JPanel();
 		fillerPanel.setPreferredSize(new Dimension(50, 10));
-		JCheckBox randomBox = new JCheckBox("Random");
-		randomBox.setFont(new Font("Arial", Font.PLAIN, 14));
 		
-		randomBox.addItemListener(new ItemListener()
-		{
-			private Timer	cTimer;
-			
-			public void itemStateChanged(ItemEvent e)
-			{
-				if (e.getStateChange() == ItemEvent.DESELECTED)
-				{
-					enableAll();
-					cTimer.stop();
-				}
-				else
-				{
-					disableAll();
-					ActionListener commandTimer = new ActionListener()
-					{
-						public void actionPerformed(ActionEvent arg0)
-						{
-							// generate new command, print it to messages
-							myDriver.setCommand(generateCommand());
-						}
-					};
-					cTimer = new Timer(3000, commandTimer);
-					cTimer.setInitialDelay(0);
-					cTimer.start();
-				}
-			}
-		});
 		JPanel responsePanel = new JPanel();
 		responsePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 4, 4));
 		responsePanel.setPreferredSize(new Dimension(235, 100));
@@ -167,7 +137,7 @@ public class CommPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				updateCustomCommand(customMessage.getText());
+				myDriver.robotSim.simulateResponse(customMessage.getText());
 				customMessage.setText("");
 			}
 		});
@@ -186,7 +156,6 @@ public class CommPanel extends JPanel
 		responsePanel.add(sendButton);
 		panel.add(commLabel);
 		panel.add(fillerPanel);
-		panel.add(randomBox);
 		panel.add(responsePanel);
 		// panel.add(customMessage);
 		return panel;
@@ -360,6 +329,54 @@ public class CommPanel extends JPanel
 		}
 	}
 	
+	public ArrayList<Component> getMyComps() {
+		return myComps;
+	}
+
+	public void setMyComps(ArrayList<Component> myComps) {
+		this.myComps = myComps;
+	}
+
+	public String[] getResponses() {
+		return responses;
+	}
+
+	public void setResponses(String[] responses) {
+		this.responses = responses;
+	}
+
+	public DevToolWindow getMyDriver() {
+		return myDriver;
+	}
+
+	public void setMyDriver(DevToolWindow myDriver) {
+		this.myDriver = myDriver;
+	}
+
+	public JTextArea getMessageArea() {
+		return messageArea;
+	}
+
+	public void setMessageArea(JTextArea messageArea) {
+		this.messageArea = messageArea;
+	}
+
+	public String[] getMySensors() {
+		return mySensors;
+	}
+
+	public void setMySensors(String[] mySensors) {
+		this.mySensors = mySensors;
+	}
+
+	public JTextPane getCustomMessage() {
+		return customMessage;
+	}
+
+	public void setCustomMessage(JTextPane customMessage) {
+		this.customMessage = customMessage;
+	}
+
 	public void setOutputText(String string)
 	{
 		messageArea.append(string + "\n");

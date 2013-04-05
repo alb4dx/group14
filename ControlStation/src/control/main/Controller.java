@@ -252,12 +252,6 @@ public class Controller
 				// msgTimer.start();
 				messageSender.send(cmd);
 			}
-			String response1 = scan.nextLine();
-			ResponseMessage ack1 = ResponseMessage.parse(response1);
-			onMessageReceive(ack1);
-			String response2 = scan.nextLine();
-			ResponseMessage ack2 = ResponseMessage.parse(response2);
-			onMessageReceive(ack2);
 		}
 		
 	}
@@ -304,9 +298,7 @@ public class Controller
 				if ((r.getResponse() == ResponseType.DONE || r.getResponse() == ResponseType.FAIL)
 						&& r.getSeqNum() == this.seq)
 				{
-					System.out.println("I will remove this message from queue");
 					messageQueue.remove();
-					System.out.println(messageQueue.size());
 					if (r.getResponse() == ResponseType.FAIL)
 					{
 						System.out.println(r.getMessageString());

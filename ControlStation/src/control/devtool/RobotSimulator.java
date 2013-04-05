@@ -1,12 +1,13 @@
 package control.devtool;
 
 import java.io.InputStream;
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
 import control.gui.GraphicsInterface;
-
+import control.communication.*;
 
 public class RobotSimulator
 {
@@ -15,7 +16,10 @@ public class RobotSimulator
 	public final Queue<Byte>	byteQueue	= new LinkedList<Byte>();
 	public final DevNXTComm testNXTComm = new DevNXTComm(this);
 	public final InputStream testInputStream = new DevNXTInputStream(this);
-		
+	public DevToolWindow myWindow = null;
+	public RobotSimulator(DevToolWindow window){
+		myWindow = window;
+	}
 //	private final Scanner scan = new Scanner(System.in);
 	
 //	public static void main(String[] args)
@@ -51,11 +55,19 @@ public class RobotSimulator
 		// what type of response do we send back?
 		// compose command into a string
 		// call simulateResponse(String response)
+		myWindow.getComm().getMessageArea().append("\n"+"Message Received:"+msg);
 	}
 	
 	public void simulateResponse(String response)
 	{
-		for (byte b : response.getBytes())
+		int sum=0;
+		for(int i=0; i < response.length(); ++i){
+			sum += response.charAt(i);
+		}
+		response ="{"+response + "|" + ~sum+"}";
+		ResponseMessage msg = ResponseMessage.parse(response);
+		myWindow.getComm().getMessageArea().append("\n"+"Message Sent:"+msg.getFormattedMessage());
+		for (byte b : msg.getFormattedMessage().getBytes())
 		{
 			byteQueue.add(b);
 		}
