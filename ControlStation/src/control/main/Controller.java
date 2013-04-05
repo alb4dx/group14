@@ -249,7 +249,7 @@ public class Controller {
 					int speed = (Integer) (r.getValueArray()[SPEEDINDEX]);
 					
 					myGraphics.getMyInfo().addData(light,sound,ultra,touch);
-					myGraphics.getMyInfo().setGraph(myGraphics.getMyInfo().updateGraph());
+					myGraphics.getMyInfo().setGraph(myGraphics.getMyInfo().getGraph());
 					myGraphics.getMyInfo().setDistance(distance);
 					myGraphics.getMyInfo().setClaw(claw);
 					myGraphics.getMyInfo().setHeading(heading);
