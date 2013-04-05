@@ -52,7 +52,7 @@ public class GraphicsInterface
 	}
 
 	public void setDataGraph(JPanel dataGraph) {
-		this.dataGraph = dataGraph;
+		this.dataGraph = (ChartPanel) dataGraph;
 	}
 
 	public JLabel getErrorLabel() {
@@ -236,7 +236,7 @@ public class GraphicsInterface
 	public void extract()
 	{
 		// TODO
-		this.dataGraph = this.myInfo.updateGraph();
+		this.dataGraph = (ChartPanel) this.myInfo.updateGraph();
 		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
 		int heading = this.myInfo.getHeading();
 		String direction="";

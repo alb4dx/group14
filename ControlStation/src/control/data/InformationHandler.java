@@ -17,13 +17,8 @@ import java.awt.Paint;
 import java.awt.color.*;
 import javax.swing.JPanel;
 
-<<<<<<< HEAD
 import java.awt.Color;
-=======
-import lejos.robotics.Color;
 
-
->>>>>>> refs/remotes/origin/master
 /**
  * Used to hold all of the data received from the robot and does any necessary
  * calculations
@@ -38,7 +33,6 @@ import lejos.robotics.Color;
  */
 public class InformationHandler
 {
-<<<<<<< HEAD
 	private int distance;
 	private float claw;
 	private int heading;
@@ -46,15 +40,6 @@ public class InformationHandler
 	private JFreeChart graph;
 	private DataPoint currentData;
 	private ArrayList<DataPoint> dataList;
-=======
-	private int						distance;
-	private float					claw;
-	private int						heading;
-	private int						speed;
-	private ChartPanel				graph;
-	private DataPoint				currentData;
-	private ArrayList<DataPoint>	dataList;
->>>>>>> refs/remotes/origin/master
 	
 	/**
 	 * The constructor for InformationHandler: created upon an
@@ -118,12 +103,8 @@ public class InformationHandler
 	 * 
 	 * @return JPanel of current graph
 	 */
-<<<<<<< HEAD
 	public JFreeChart getGraph(){
-=======
-	public JPanel getGraph()
-	{
->>>>>>> refs/remotes/origin/master
+
 		return graph;
 	}
 	
@@ -197,14 +178,9 @@ public class InformationHandler
 	 * @param j
 	 *            Jpanel object of graph to set
 	 */
-<<<<<<< HEAD
 	public void setGraph(JFreeChart j){
 		this.graph=j;
-=======
-	public void setGraph(JPanel j)
-	{
-		this.graph = (ChartPanel) j;
->>>>>>> refs/remotes/origin/master
+
 	}
 	
 	/**
@@ -236,22 +212,10 @@ public class InformationHandler
 	 */
 	public JPanel updateGraph()
 	{
-<<<<<<< HEAD
 		XYDataset dataset=new XYSeriesCollection();
 		
 		//setContentPane(chartPanel);
-=======
-		XYDataset dataset = new XYSeriesCollection();
-		JFreeChart chart = null;
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(600, 400)); // ***
-																		// what
-																		// should
-																		// these
-																		// values
-																		// be?
-		setContentPane(chartPanel);
->>>>>>> refs/remotes/origin/master
+
 		
 		// Y axis - should update if a data value exceeds the max
 		// default == 100
@@ -302,11 +266,8 @@ public class InformationHandler
 	{
 		
 		XYSeries lightSeries = new XYSeries("Light");
-<<<<<<< HEAD
 		int first=dataList.size() - 1;
-=======
-		int first = dataList.size();
->>>>>>> refs/remotes/origin/master
+
 		
 		for (int i = first; i > 0; i--)
 		{
@@ -336,19 +297,13 @@ public class InformationHandler
 		XYSeries uSonicSeries = new XYSeries("Ultrasonic");
 		int first = dataList.size() - 1;
 		
-<<<<<<< HEAD
 		for(int i=first;i>0;i--){
 			uSonicSeries.add(i,dataList.get(i).getUltrasonic());
-=======
-		for (int i = first; i > 0; i--)
-		{
-			uSonicSeries.add(i, dataList.get(i).getSound());
->>>>>>> refs/remotes/origin/master
+
 		}
 		return (uSonicSeries);
 	}
 	
-<<<<<<< HEAD
 	private XYSeries createTouchSeries() {
 		XYSeries touchSeries = new XYSeries("Touch");
 		for(int i = dataList.size() - 1; i > 0; i--) {
@@ -358,14 +313,10 @@ public class InformationHandler
 	}
 	
 	private JFreeChart createChart(XYDataset dataset){
-=======
-	private void createChart(XYDataset dataset)
-	{
->>>>>>> refs/remotes/origin/master
+
 		
-<<<<<<< HEAD
 		graph = ChartFactory.createXYLineChart(
-				"Telemtry Log",	// chart title
+				"Telemetry Log",	// chart title
 				"Data Point",			// x axis label
 				"Sensor Reading",			// y axis label
 				dataset,		// data
@@ -373,28 +324,15 @@ public class InformationHandler
 				true,			// include legend
 				true,			// tool tips
 				false			// urls
-=======
-		chart = ChartFactory.createXYLineChart("Telemtry Log", // chart title
-				"X", // x axis label
-				"Y", // y axis label
-				dataset, // data
-				PlotOrientation.VERTICAL, true, // include legend
-				true, // tool tips
-				false // urls
->>>>>>> refs/remotes/origin/master
+
 				);
 		
 		// Chart Customization
 		
-<<<<<<< HEAD
 		graph.setBackgroundPaint(Color.WHITE);
 		//StandardLegend legend = (StandardLegend) chart.getLegend();
 		//legend.setDisplaySeriesShapes(true);
-=======
-		chart.setBackgroundPaint(Color.WHITE);
-		// StandardLegend legend = (StandardLegend) chart.getLegend();
-		// legend.setDisplaySeriesShapes(true);
->>>>>>> refs/remotes/origin/master
+
 		
 		XYPlot plot = (XYPlot) graph.getXYPlot();
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
@@ -406,12 +344,8 @@ public class InformationHandler
 		plot.setRenderer(renderer);
 		
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-<<<<<<< HEAD
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-=======
-		rangeAxis.setStandardTickUnits(NumberAxis
-				.createIntegerTickUnits(NumberAxis.createIntegerTickUnits()));
->>>>>>> refs/remotes/origin/master
+
 		
 		return graph;
 	}
