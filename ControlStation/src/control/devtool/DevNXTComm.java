@@ -13,20 +13,19 @@ public class DevNXTComm implements NXTComm
 {
 
 	
-	private RobotSimulator	testTool;
+	private RobotSimulator	robotSim;
 	private DevNXTInputStream stream;
 
 	public DevNXTComm(RobotSimulator tool)
 	{
-		this.testTool = tool;
+		this.robotSim = tool;
 		this.stream = new DevNXTInputStream(tool);
 	}
 	
 	@Override // one of two methods we care about here
 	public void write(byte[] data) throws IOException
 	{
-		// TODO pass byte array to dev tool
-		testTool.messageFromStation("RECEIVED: " + new String(data));
+		robotSim.messageFromStation(new String(data));
 	}
 	
 	@Override // the other one

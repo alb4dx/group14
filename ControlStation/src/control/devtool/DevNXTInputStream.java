@@ -8,24 +8,24 @@ import java.io.InputStream;
 public class DevNXTInputStream extends InputStream
 {
 	
-	private RobotSimulator	testTool;
+	private RobotSimulator	robotSim;
 	
 	public DevNXTInputStream(RobotSimulator tool)
 	{
-		this.testTool = tool;
+		this.robotSim = tool;
 	}
 	
 	@Override
 	public int read() throws IOException
 	{
 		
-		synchronized (testTool.lock)
+		synchronized (robotSim.lock)
 		{
-			while (testTool.byteQueue.isEmpty())
+			while (robotSim.byteQueue.isEmpty())
 			{
 				try
 				{
-					testTool.lock.wait();
+					robotSim.lock.wait();
 				}
 				catch (InterruptedException e)
 				{
@@ -33,19 +33,19 @@ public class DevNXTInputStream extends InputStream
 			}
 		}
 		
-		return testTool.byteQueue.remove();
+		return robotSim.byteQueue.remove();
 	}
 	
 	@Override
 	public int read(byte[] buf)
 	{
-		synchronized (testTool.lock)
+		synchronized (robotSim.lock)
 		{
-			while (testTool.byteQueue.isEmpty())
+			while (robotSim.byteQueue.isEmpty())
 			{
 				try
 				{
-					testTool.lock.wait();
+					robotSim.lock.wait();
 				}
 				catch (InterruptedException e)
 				{
@@ -54,14 +54,14 @@ public class DevNXTInputStream extends InputStream
 		}
 		
 		int i = 0;
-		for (byte b : testTool.byteQueue)
+		for (byte b : robotSim.byteQueue)
 		{
 			buf[i]=b;
 			i++;
 		}
 		
-		int size = testTool.byteQueue.size();
-		testTool.byteQueue.clear();
+		int size = robotSim.byteQueue.size();
+		robotSim.byteQueue.clear();
 		return size;
 		
 	}

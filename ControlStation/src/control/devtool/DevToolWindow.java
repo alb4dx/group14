@@ -26,7 +26,7 @@ public class DevToolWindow
 	private String			myRobotCommand;	// command randomly generated
 	private String			myReceivedCommand;
 	
-	public final RobotSimulator robotSimulator = new RobotSimulator();
+	public final RobotSimulator robotSim = new RobotSimulator();
 	
 	@SuppressWarnings("unused")
 	/**
@@ -114,7 +114,7 @@ public class DevToolWindow
 	public void setCommand(String generateCommand)
 	{
 		myRobotCommand = generateCommand;
-		robotSimulator.simulateResponse(generateCommand);
+		robotSim.simulateResponse(generateCommand);
 	}
 	
 	public void validateCommand()

@@ -132,7 +132,7 @@ public class Controller
 		else
 		{
 			DevToolWindow dev = new DevToolWindow();
-			nxtComm = new DevNXTComm(dev.robotSimulator);
+			nxtComm = new DevNXTComm(dev.robotSim);
 		}
 		
 		Scanner scan = new Scanner(System.in);
@@ -143,6 +143,10 @@ public class Controller
 		messageListener = new MessageListener(this, nxtComm.getInputStream());
 		Thread sender = new Thread(messageSender);
 		Thread listener = new Thread(messageListener);
+		
+		sender.setName("Message Sender Thread");
+		listener.setName("Message Listener Thread");
+		
 		sender.start();
 		listener.start();
 		ActionListener querySender = new ActionListener()
@@ -395,6 +399,7 @@ public class Controller
 
 	public void onInvalidMessage(String str)
 	{
+		System.err.println("Corrupted message received: " + str);
 		resend();
 	}
 }

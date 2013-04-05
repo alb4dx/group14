@@ -15,7 +15,8 @@ public class RobotSimulator
 	public final Queue<Byte>	byteQueue	= new LinkedList<Byte>();
 	public final DevNXTComm testNXTComm = new DevNXTComm(this);
 	public final InputStream testInputStream = new DevNXTInputStream(this);
-	private final Scanner scan = new Scanner(System.in);
+		
+//	private final Scanner scan = new Scanner(System.in);
 	
 //	public static void main(String[] args)
 //	{
@@ -44,7 +45,12 @@ public class RobotSimulator
 	
 	public void messageFromStation(String msg)
 	{
+		//TODO simulated robot behavior
 		System.out.println(msg);
+		// what type of message do we have?
+		// what type of response do we send back?
+		// compose command into a string
+		// call simulateResponse(String response)
 	}
 	
 	public void simulateResponse(String response)
