@@ -57,7 +57,7 @@ public class MessageListener implements Runnable
 	 */
 	protected void processInvalidMessage(String str)
 	{
-		myController.resend();
+		myController.onInvalidMessage(str);
 	}
 	
 	/**

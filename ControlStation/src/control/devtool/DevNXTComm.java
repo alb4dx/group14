@@ -1,29 +1,38 @@
-package control.test;
+package control.devtool;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTInfo;
 
-public class TestToolComm implements NXTComm
+public class DevNXTComm implements NXTComm
 {
 
 	
-	private TestComm	testTool;
+	private RobotSimulator	testTool;
+	private DevNXTInputStream stream;
 
-	public TestToolComm(TestComm tool)
+	public DevNXTComm(RobotSimulator tool)
 	{
 		this.testTool = tool;
+		this.stream = new DevNXTInputStream(tool);
 	}
 	
-	@Override // the only method we care about here
+	@Override // one of two methods we care about here
 	public void write(byte[] data) throws IOException
 	{
 		// TODO pass byte array to dev tool
 		testTool.messageFromStation("RECEIVED: " + new String(data));
+	}
+	
+	@Override // the other one
+	public InputStream getInputStream()
+	{
+		return stream;
 	}
 	
 	
@@ -46,13 +55,6 @@ public class TestToolComm implements NXTComm
 	{
 		// empty
 		return 0;
-	}
-
-	@Override
-	public InputStream getInputStream()
-	{
-		// empty
-		return null;
 	}
 
 	@Override

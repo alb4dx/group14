@@ -2,11 +2,12 @@ package control.test;
 
 import control.communication.MessageListener;
 import control.communication.ResponseMessage;
+import control.devtool.RobotSimulator;
 
 public class TestToolMessageListener extends MessageListener
 {
 
-	public TestToolMessageListener(TestComm tool)
+	public TestToolMessageListener(RobotSimulator tool)
 	{
 		super(null, tool.testInputStream);
 	}

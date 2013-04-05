@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import control.test.TestComm;
 import control.test.TestToolMessageListener;
 
 
@@ -18,7 +17,7 @@ import control.test.TestToolMessageListener;
  * 
  * @author Steph
  */
-public class Driver
+public class DevToolWindow
 {
 	private JFrame			myFrame;
 	private CommPanel		myComm;
@@ -27,8 +26,7 @@ public class Driver
 	private String			myRobotCommand;	// command randomly generated
 	private String			myReceivedCommand;
 	
-	private TestComm testComm = new TestComm();
-	private TestToolMessageListener lis = new TestToolMessageListener(testComm);
+	public final RobotSimulator robotSimulator = new RobotSimulator();
 	
 	@SuppressWarnings("unused")
 	/**
@@ -39,15 +37,14 @@ public class Driver
 	 */
 	public static void main(String[] args)
 	{
-		Driver driver = new Driver();
-		(new Thread(driver.lis)).start();
+		DevToolWindow driver = new DevToolWindow();
 	}
 	
 	/**
 	 * The Driver constructor -takes no arguments, but sets up SudokuPane and
 	 * ButtonPane, as well as links them together in one JFrame.
 	 */
-	public Driver()
+	public DevToolWindow()
 	{
 		// Set the look and feel of the Frame and catch any possible errors
 		try
@@ -117,11 +114,12 @@ public class Driver
 	public void setCommand(String generateCommand)
 	{
 		myRobotCommand = generateCommand;
-		testComm.simulateResponse(generateCommand);
+		robotSimulator.simulateResponse(generateCommand);
 	}
 	
 	public void validateCommand()
 	{
 		myComm.validateCommand(myReceivedCommand);
 	}
+	
 }

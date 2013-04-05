@@ -1,15 +1,16 @@
-package control.test;
+package control.devtool;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 
-public class TestToolInputStream extends InputStream
+
+public class DevNXTInputStream extends InputStream
 {
 	
-	private TestComm	testTool;
+	private RobotSimulator	testTool;
 	
-	public TestToolInputStream(TestComm tool)
+	public DevNXTInputStream(RobotSimulator tool)
 	{
 		this.testTool = tool;
 	}

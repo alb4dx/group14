@@ -21,12 +21,12 @@ import javax.swing.text.StyledDocument;
 public class TelemetryPanel extends JPanel
 {
 	ArrayList<Component>	myComps		= new ArrayList<Component>();
-	private Driver			myDriver;
+	private DevToolWindow			myDriver;
 	String[]				mySensors	=
 										{ "Light", "Ultrasonic", "Sound",
 			"Touch", "Claw position", "Orientation", "Location" };
 	
-	public TelemetryPanel(Driver driver)
+	public TelemetryPanel(DevToolWindow driver)
 	{
 		myDriver = driver;
 		// Set the look and feel of the Frame and catch any possible errors

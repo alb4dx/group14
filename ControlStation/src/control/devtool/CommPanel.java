@@ -38,13 +38,13 @@ public class CommPanel extends JPanel
 	
 	String[]				responses	=
 										{ "Query", "Command received" };
-	private Driver			myDriver;
+	private DevToolWindow			myDriver;
 	private JTextArea		messageArea;
 	String[]				mySensors	=
 										{ "0", "0", "0", "0", "0", "0", "0" };
 	private JTextPane		customMessage;
 	
-	public CommPanel(Driver driver)
+	public CommPanel(DevToolWindow driver)
 	{
 		myDriver = driver;
 		// Set the look and feel of the Frame and catch any possible errors

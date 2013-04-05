@@ -45,11 +45,11 @@ public class DebugInterface {
 	 *		command queue list should be a JLIST not a text area
 	 * */
 	
-	public static void main(String[] args) {
-		
-		DebugInterface myDebug = new DebugInterface(new Controller());
-		
-	}
+//	public static void main(String[] args) {
+//		
+//		DebugInterface myDebug = new DebugInterface(new Controller());
+//		
+//	}
 	
 	public static CommandQueue getMyQueue() {
 		return myQueue;
