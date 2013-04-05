@@ -33,8 +33,8 @@ public class MessageSender implements Runnable
 	
 	private void transmit(CommandMessage message) throws IOException
 	{
-		System.out.println("Message transmitted:"+message.getMessageString());
-		//outputSender.write(message.getFormattedMessage().getBytes());
+		//System.out.println("Message transmitted:"+message.getMessageString());
+		outputSender.write(message.getFormattedMessage().getBytes());
 	}
 	
 	@Override
