@@ -56,9 +56,12 @@ public class DataPoint
 	 * Get method for touch data
 	 * @return touch	boolean touch, not-touch snesor
 	 */
-	public boolean getTouch()
+	public double getTouch()
 	{
-		return touch;
+		if(touch) {			//for drawing graph
+			return 100.0;
+		}
+		return 0.0;
 	}
 	
 	/**
