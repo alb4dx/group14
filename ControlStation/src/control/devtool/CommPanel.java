@@ -27,6 +27,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
+import control.communication.Message;
+
 
 @SuppressWarnings("serial")
 public class CommPanel extends JPanel
@@ -215,24 +217,27 @@ public class CommPanel extends JPanel
 		switch (choice)
 		{
 			case 0: // connected
-				command = "{connected}";
+				command = "{0connected|";
 			break;
 			case 1: // received
-				command = "{received&message:You win}";
+				command = "{1received&message:You win|";
 			break;
 			case 2: // success
-				command = "{success&message:congrats}";
+				command = "{0success&message:congrats|";
 			break;
 			case 3: // failure
-				command = "{failure&message:you suck}";
+				command = "{1failure&message:you suck|";
 			break;
 			case 4: // data
-				command = "{data&distance:1&light:60&sound:20&touch:0&claw:.75&heading:90&speed:2}";
+				command = "{0data&distance:1&light:60&sound:20&touch:0&claw:.75&heading:90&speed:2|";
 			break;
 			case 5: // error
-				command = "{error:didn't work}";
+				command = "{1error:didn't work|";
 			break;
 		}
+		
+		command += Message.genCheckSum(command) + "}";
+		
 		messageArea.append(command + "\n");
 		messageArea.setCaretPosition(messageArea.getDocument().getLength());
 		return command;

@@ -39,6 +39,78 @@ import control.data.InformationHandler;
  */
 public class GraphicsInterface
 {
+	public JFrame getMyFrame() {
+		return myFrame;
+	}
+
+	public void setMyFrame(JFrame myFrame) {
+		this.myFrame = myFrame;
+	}
+
+	public JPanel getDataGraph() {
+		return dataGraph;
+	}
+
+	public void setDataGraph(JPanel dataGraph) {
+		this.dataGraph = dataGraph;
+	}
+
+	public JLabel getErrorLabel() {
+		return errorLabel;
+	}
+
+	public void setErrorLabel(JLabel errorLabel) {
+		this.errorLabel = errorLabel;
+	}
+
+	public JLabel getLocationLabel() {
+		return locationLabel;
+	}
+
+	public void setLocationLabel(JLabel locationLabel) {
+		this.locationLabel = locationLabel;
+	}
+
+	public JLabel getOrientationLabel() {
+		return orientationLabel;
+	}
+
+	public void setOrientationLabel(JLabel orientationLabel) {
+		this.orientationLabel = orientationLabel;
+	}
+
+	public JTextArea getErrorText() {
+		return errorText;
+	}
+
+	public void setErrorText(JTextArea errorText) {
+		this.errorText = errorText;
+	}
+
+	public JTextArea getLocationText() {
+		return locationText;
+	}
+
+	public void setLocationText(JTextArea locationText) {
+		this.locationText = locationText;
+	}
+
+	public JTextArea getOrientationText() {
+		return orientationText;
+	}
+
+	public void setOrientationText(JTextArea orientationText) {
+		this.orientationText = orientationText;
+	}
+
+	public InformationHandler getMyInfo() {
+		return myInfo;
+	}
+
+	public void setMyInfo(InformationHandler myInfo) {
+		this.myInfo = myInfo;
+	}
+
 	private JFrame				myFrame;			// The frame encompassing the whole GUI
 	private ChartPanel			dataGraph;			// The graph displaying past and present telemetry data
 	private JLabel				errorLabel;			// The label for the error section heading
@@ -164,5 +236,41 @@ public class GraphicsInterface
 	public void extract()
 	{
 		// TODO
+		this.dataGraph = this.myInfo.updateGraph();
+		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
+		int heading = this.myInfo.getHeading();
+		String direction="";
+		switch(heading){
+		case 0: direction = "N";
+				break;
+		case 30: direction = "NE";
+				break;
+		case 60: direction = "NE";
+				break;
+		case 90: direction = "E";
+				break;
+		case 120: direction = "SE";
+				break;
+		case 150: direction = "SE";
+				break;
+		case 180: direction = "S";
+				break;
+		case -30: direction = "NW";
+				break;
+		case -60: direction = "NW";
+				break;
+		case -90: direction = "W";
+				break;
+		case -120: direction = "SW";
+				break;
+		case -150: direction = "SW";
+				break;
+		case -180: direction = "S";
+				break;
+		}
+		this.locationText.setText(direction);
+		this.myFrame.invalidate();
+		this.myFrame.validate();
+		this.myFrame.repaint();
 	}
 }

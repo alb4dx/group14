@@ -1,15 +1,12 @@
 package control.test;
 
-import java.io.InputStream;
-
 import control.communication.MessageListener;
 import control.communication.ResponseMessage;
-import control.main.Controller;
 
 public class TestToolMessageListener extends MessageListener
 {
 
-	public TestToolMessageListener(TestTool tool)
+	public TestToolMessageListener(TestComm tool)
 	{
 		super(null, tool.testInputStream);
 	}
@@ -18,6 +15,12 @@ public class TestToolMessageListener extends MessageListener
 	protected void processMessage(ResponseMessage rsp)
 	{
 		System.out.println("CONTROL STATION received: " + rsp);
+	}
+	
+	@Override
+	protected void processInvalidMessage(String str)
+	{
+		System.out.println("CONTROL STATION rcv INVALID: " + str);
 	}
 	
 }
