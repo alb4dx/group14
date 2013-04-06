@@ -12,7 +12,6 @@ package control.communication;
  */
 public abstract class Message
 {
-	protected static int sequenceNumber = 0;
 	
 	protected String messageString = new String();
 	protected String formattedMessage = new String();
@@ -45,7 +44,7 @@ public abstract class Message
 	
 	/**
 	 * Returns message in proper format
-	 * @return formattedMessage		 Formatted message
+	 * @return formattedMessage Formatted message
 	 */
 	public final String getFormattedMessage()
 	{
@@ -69,32 +68,37 @@ public abstract class Message
 	{
 		return checksum;
 	}
-	/**
-	 *Sets the messageString field to value
-	 * @param value			string messageString field will be set to
-	 */
-	public void setMessageString(String value) {
-		this.messageString = value;
-	}
-	/**
-	 *Sets the formattedMessage field to value
-	 * @param value			string formattedMessage field will be set to
-	 */
-	public void setFormattedMessage(String value) {
-		this.formattedMessage = value;
-	}
-	/**
-	 *Sets the seqNum field to 
-	 * @param value			string seqNum field will be set to
-	 */
-	public void setSeqNum(int value) {
-		this.seqNum = value;
-	}
-	/**
-	 *Sets the checksum field to value
-	 * @param value			string checksum field will be set to
-	 */
-	public void setChecksum(int value) {
-		this.checksum = value;
-	}
+	
+	//setters removed because we want this to be an immutable class;
+	//protected fields are already available to subclasses / classes
+	//in the same package
+	
+//	/**
+//	 *Sets the messageString field to value
+//	 * @param value			string messageString field will be set to
+//	 */
+//	public void setMessageString(String value) {
+//		this.messageString = value;
+//	}
+//	/**
+//	 *Sets the formattedMessage field to value
+//	 * @param value			string formattedMessage field will be set to
+//	 */
+//	public void setFormattedMessage(String value) {
+//		this.formattedMessage = value;
+//	}
+//	/**
+//	 *Sets the seqNum field to 
+//	 * @param value			string seqNum field will be set to
+//	 */
+//	public void setSeqNum(int value) {
+//		this.seqNum = value;
+//	}
+//	/**
+//	 *Sets the checksum field to value
+//	 * @param value			string checksum field will be set to
+//	 */
+//	public void setChecksum(int value) {
+//		this.checksum = value;
+//	}
 }

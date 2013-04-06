@@ -1,5 +1,6 @@
 package control.main;
 
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,7 @@ import lejos.pc.comm.NXTInfo;
 
 import control.gui.DebugInterface;
 import control.gui.GraphicsInterface;
+import control.input.ControllerInputHandler;
 import control.communication.CommandMessage;
 import control.communication.MessageListener;
 import control.communication.MessageSender;
@@ -49,7 +51,8 @@ import control.devtool.DevToolWindow;
  * controller sends command messages from DebugInterface and
  */
 
-//TODO extract doesnt update the graph, figure out how to bring up the debug interface on error message
+// TODO extract doesnt update the graph, figure out how to bring up the debug
+// interface on error message
 public class Controller
 {
 	
@@ -61,25 +64,26 @@ public class Controller
 	private ControllerState					myState;
 	private static Timer					msgTimer;
 	public int								seq				= 0;
-	private final int						DISTANCEINDEX	= 0;
-	private final int						LIGHTINDEX		= 1;
-	private final int						SOUNDINDEX		= 2;
-	private final int						TOUCHINDEX		= 3;
-	private final int						CLAWINDEX		= 4;
-	private final int						HEADINGINDEX	= 5;
-	private final int						SPEEDINDEX		= 6;
-	private final int						ULTRAINDEX		= 7;
-	private final int						SPEED 			= 360;
-	private final int						TURNLEFT		= -30;
-	private final int						TURNRIGHT		=  30;
-
+	public final int						DISTANCEINDEX	= 0;
+	public final int						LIGHTINDEX		= 1;
+	public final int						SOUNDINDEX		= 2;
+	public final int						TOUCHINDEX		= 3;
+	public final int						CLAWINDEX		= 4;
+	public final int						HEADINGINDEX	= 5;
+	public final int						SPEEDINDEX		= 6;
+	public final int						ULTRAINDEX		= 7;
+	public final int						SPEED			= 360;
+	public final int						TURNSPEED		= 30;
+	public final int						TURNLEFT		= -TURNSPEED;
+	public final int						TURNRIGHT		= TURNSPEED;
+	
 	private boolean							debugMode		= false;
 	
 	public static void main(String[] args)
 	{
 		
 		boolean debug = true;
-		Controller controller = new Controller(debug);
+		new Controller(debug);
 		
 	}
 	
@@ -186,10 +190,10 @@ public class Controller
 				resend();
 			}
 		};
-		//TODO change this back to 3000 10 secs just for testing purposes
+		// TODO change this back to 3000 10 secs just for testing purposes
 		msgTimer = new Timer(10000, timeOut);
 		
-		createKeyListeners();
+		initInputHandler();
 		
 		while (true)
 		{
@@ -255,7 +259,7 @@ public class Controller
 				cmd = new CommandMessage(CommandType.CLAW, command.substring(
 						endCommand + 1, command.length()));
 			}
-			messageQueue.add(cmd);
+			addMessage(cmd);
 			if (myState == ControllerState.CANSEND)
 			{
 				myState = ControllerState.WAITACK1;
@@ -268,25 +272,26 @@ public class Controller
 	}
 	
 	// do we need to give UPDT priority??
-	public void addMessage(CommandMessage s)
+	public void addMessage(CommandMessage msg)
 	{
 		// add string to queue as message
-		if (s.getCommand() == CommandType.UPDT)
-		{
-			messageQueue.add(s);
-		}
-		else
-		{
-			messageQueue.add(s);
-		}
-		myDebug.getQueue().addMessage(s);
+		// if (s.getCommand() == CommandType.UPDT)
+		// {
+		// messageQueue.add(s);
+		// }
+		// else
+		// {
+		// messageQueue.add(s);
+		// }
+		messageQueue.add(msg);
+		myDebug.getQueue().addMessage(msg);
 	}
 	
 	public void onMessageReceive(ResponseMessage r)
 	{
 		// message listener calls whenever a message receives (hands controller
 		// received message
-		System.out.println("Message Received:"+r.getFormattedMessage());
+		System.out.println("Message Received:" + r.getFormattedMessage());
 		this.myDebug.getMyResponse().getMyResponses()
 				.append(r.getMessageString());
 		switch (myState)
@@ -296,12 +301,14 @@ public class Controller
 						&& r.getSeqNum() == this.seq)
 				{
 					msgTimer.stop();
-					if(messageQueue.peek().getCommand() == CommandType.QUERY ){
+					if (messageQueue.peek().getCommand() == CommandType.QUERY)
+					{
 						msgTimer.restart();
 						myState = ControllerState.WAITDATA;
 					}
-					else{
-					myState = ControllerState.WAITACK2;
+					else
+					{
+						myState = ControllerState.WAITACK2;
 					}
 				}
 				else if (r.getResponse() == ResponseType.NACK
@@ -313,31 +320,34 @@ public class Controller
 			// i need to let the user know a command failed Where do i put the
 			// message
 			case WAITDATA:
-			 if (r.getResponse() == ResponseType.DATA && r.getSeqNum() == this.seq){
-				 msgTimer.stop();
-				int light = (Integer) (r.getValueArray()[LIGHTINDEX]);
-				int sound = (Integer) (r.getValueArray()[SOUNDINDEX]);
-				boolean touch = (Boolean) (r.getValueArray()[TOUCHINDEX]);
-				int ultra = (Integer) (r.getValueArray()[ULTRAINDEX]);
-				int distance = (Integer) (r.getValueArray()[DISTANCEINDEX]);
-				float claw = (Float) (r.getValueArray()[CLAWINDEX]);
-				int heading = (Integer) (r.getValueArray()[HEADINGINDEX]);
-				int speed = (Integer) (r.getValueArray()[SPEEDINDEX]);
-				
-				myGraphics.getMyInfo().addData(light, sound, ultra, touch);
-				myGraphics.getMyInfo().setGraph(
-				myGraphics.getMyInfo().getGraph());
-				myGraphics.getMyInfo().setDistance(distance);
-				myGraphics.getMyInfo().setClaw(claw);
-				myGraphics.getMyInfo().setHeading(heading);
-				myGraphics.getMyInfo().setSpeed(speed);
-				myGraphics.extract();
-				myState = ControllerState.WAITACK2;
-			 }
-			 else{
-				 resend();
-			 }
-			 break;
+				if (r.getResponse() == ResponseType.DATA
+						&& r.getSeqNum() == this.seq)
+				{
+					msgTimer.stop();
+					int light = (Integer) (r.getValueArray()[LIGHTINDEX]);
+					int sound = (Integer) (r.getValueArray()[SOUNDINDEX]);
+					boolean touch = (Boolean) (r.getValueArray()[TOUCHINDEX]);
+					int ultra = (Integer) (r.getValueArray()[ULTRAINDEX]);
+					int distance = (Integer) (r.getValueArray()[DISTANCEINDEX]);
+					float claw = (Float) (r.getValueArray()[CLAWINDEX]);
+					int heading = (Integer) (r.getValueArray()[HEADINGINDEX]);
+					int speed = (Integer) (r.getValueArray()[SPEEDINDEX]);
+					
+					myGraphics.getMyInfo().addData(light, sound, ultra, touch);
+					myGraphics.getMyInfo().setGraph(
+							myGraphics.getMyInfo().getGraph());
+					myGraphics.getMyInfo().setDistance(distance);
+					myGraphics.getMyInfo().setClaw(claw);
+					myGraphics.getMyInfo().setHeading(heading);
+					myGraphics.getMyInfo().setSpeed(speed);
+					myGraphics.extract();
+					myState = ControllerState.WAITACK2;
+				}
+				else
+				{
+					resend();
+				}
+			break;
 			case WAITACK2:
 				if ((r.getResponse() == ResponseType.DONE || r.getResponse() == ResponseType.FAIL)
 						&& r.getSeqNum() == this.seq)
@@ -356,21 +366,23 @@ public class Controller
 						this.seq = 0;
 					}
 					if (messageQueue.peek() == null)
-					{	
-						//testing robot timeout
-						/*try {
-							Thread.sleep(11000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}*/
+					{
+						// testing robot timeout
+						/*
+						 * try {
+						 * Thread.sleep(11000);
+						 * } catch (InterruptedException e) {
+						 * // TODO Auto-generated catch block
+						 * e.printStackTrace();
+						 * }
+						 */
 						CommandMessage filler = new CommandMessage(
 								CommandType.ACK);
 						CommandMessage ack = new CommandMessage(CommandType.ACK);
 						// messageQueue.add(ack);
 						myState = ControllerState.CANSEND;
 						messageSender.send(ack);
-				
+						
 					}
 					else
 					{
@@ -384,8 +396,7 @@ public class Controller
 				else if (r.getResponse() == ResponseType.ERROR
 						&& r.getSeqNum() == this.seq)
 				{
-					CommandMessage filler = new CommandMessage(
-							CommandType.ACK);
+					CommandMessage filler = new CommandMessage(CommandType.ACK);
 					CommandMessage ack = new CommandMessage(CommandType.ACK);
 					// messageQueue.add(ack);
 					messageSender.send(ack);
@@ -413,13 +424,15 @@ public class Controller
 	// will then update robot response scroll pane
 	public void resend()
 	{
-		 msgTimer.stop();
-		 msgTimer.restart();
+		msgTimer.stop();
+		msgTimer.restart();
 		// will crash if front of queue empty
-		 if(myState == ControllerState.WAITDATA){
-			 myState = ControllerState.WAITACK1;
-		 }
-		System.out.println("Resending:"+messageQueue.element().getMessageString());
+		if (myState == ControllerState.WAITDATA)
+		{
+			myState = ControllerState.WAITACK1;
+		}
+		System.out.println("Resending:"
+				+ messageQueue.element().getMessageString());
 		messageSender.send(messageQueue.element());
 	}
 	
@@ -427,115 +440,163 @@ public class Controller
 	{
 		CANSEND, WAITACK1, WAITDATA, WAITACK2, DEBUG
 	}
-
+	
 	public void onInvalidMessage(String str)
 	{
 		System.err.println("Corrupted message received: " + str);
 		resend();
 	}
-	public void createKeyListeners(){
-		KeyListener upKey = new KeyListener()
-		{
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getKeyCode() == KeyEvent.VK_UP){
-					CommandMessage cmd = new CommandMessage(CommandType.MOVE, SPEED);
-					messageQueue.add(cmd);
-					if (myState == ControllerState.CANSEND)
-					{
-						myState = ControllerState.WAITACK1;
-						msgTimer.start();
-						System.out.println(cmd.getMessageString());
-						messageSender.send(cmd);
-					}
-				}
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getKeyCode() == KeyEvent.VK_UP){
-					CommandMessage cmd = new CommandMessage(CommandType.STOP);
-					messageQueue.add(cmd);
-					if (myState == ControllerState.CANSEND)
-					{
-						myState = ControllerState.WAITACK1;
-						msgTimer.start();
-						System.out.println(cmd.getMessageString());
-						messageSender.send(cmd);
-					}
-				}
-			}
-
 	
-		};
-		KeyListener leftKey = new KeyListener(){
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getKeyCode() == KeyEvent.VK_LEFT){
-					CommandMessage cmd = new CommandMessage(CommandType.TURN, TURNLEFT);
-					messageQueue.add(cmd);
-					if (myState == ControllerState.CANSEND)
-					{
-						myState = ControllerState.WAITACK1;
-						msgTimer.start();
-						System.out.println(cmd.getMessageString());
-						messageSender.send(cmd);
-					}
-				}
-			}
-			
-		};
+	public void initInputHandler()
+	{
+//		KeyListener upKey = new KeyListener()
+//		{
+//			@Override
+//			public void keyTyped(KeyEvent e)
+//			{
+//			}
+//			
+//			@Override
+//			public void keyPressed(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//				if (e.getKeyCode() == KeyEvent.VK_UP)
+//				{
+//					CommandMessage cmd = new CommandMessage(CommandType.MOVE,
+//							SPEED);
+//					messageQueue.add(cmd);
+//					if (myState == ControllerState.CANSEND)
+//					{
+//						myState = ControllerState.WAITACK1;
+//						msgTimer.start();
+//						System.out.println(cmd.getMessageString());
+//						messageSender.send(cmd);
+//					}
+//				}
+//			}
+//			
+//			@Override
+//			public void keyReleased(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//				if (e.getKeyCode() == KeyEvent.VK_UP)
+//				{
+//					CommandMessage cmd = new CommandMessage(CommandType.STOP);
+//					messageQueue.add(cmd);
+//					if (myState == ControllerState.CANSEND)
+//					{
+//						myState = ControllerState.WAITACK1;
+//						msgTimer.start();
+//						System.out.println(cmd.getMessageString());
+//						messageSender.send(cmd);
+//					}
+//				}
+//			}
+//			
+//		};
+//		KeyListener leftKey = new KeyListener()
+//		{
+//			
+//			@Override
+//			public void keyTyped(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//			
+//			@Override
+//			public void keyPressed(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//			
+//			@Override
+//			public void keyReleased(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//				if (e.getKeyCode() == KeyEvent.VK_LEFT)
+//				{
+//					CommandMessage cmd = new CommandMessage(CommandType.TURN,
+//							TURNLEFT);
+//					messageQueue.add(cmd);
+//					if (myState == ControllerState.CANSEND)
+//					{
+//						myState = ControllerState.WAITACK1;
+//						msgTimer.start();
+//						System.out.println(cmd.getMessageString());
+//						messageSender.send(cmd);
+//					}
+//				}
+//			}
+//			
+//		};
+//		
+//		KeyListener rightKey = new KeyListener()
+//		{
+//			
+//			@Override
+//			public void keyTyped(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//			
+//			@Override
+//			public void keyPressed(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//			
+//			@Override
+//			public void keyReleased(KeyEvent e)
+//			{
+//				// TODO Auto-generated method stub
+//				if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+//				{
+//					CommandMessage cmd = new CommandMessage(CommandType.TURN,
+//							TURNRIGHT);
+//					messageQueue.add(cmd);
+//					if (myState == ControllerState.CANSEND)
+//					{
+//						myState = ControllerState.WAITACK1;
+//						msgTimer.start();
+//						System.out.println(cmd.getMessageString());
+//						messageSender.send(cmd);
+//					}
+//				}
+//			}
+//			
+//		};
 		
-		KeyListener rightKey = new KeyListener(){
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-					CommandMessage cmd = new CommandMessage(CommandType.TURN, TURNRIGHT);
-					messageQueue.add(cmd);
-					if (myState == ControllerState.CANSEND)
-					{
-						myState = ControllerState.WAITACK1;
-						msgTimer.start();
-						System.out.println(cmd.getMessageString());
-						messageSender.send(cmd);
-					}
-				}
-			}
-			
-		};
-		
-		myGraphics.getMyFrame().getContentPane().addKeyListener(upKey);
-		myGraphics.getMyFrame().getContentPane().addKeyListener(leftKey);
-		myGraphics.getMyFrame().getContentPane().addKeyListener(rightKey);
+		// myGraphics.getMyFrame().getContentPane().addKeyListener(upKey);
+		// myGraphics.getMyFrame().getContentPane().addKeyListener(leftKey);
+		// myGraphics.getMyFrame().getContentPane().addKeyListener(rightKey);
+		KeyboardFocusManager manager = KeyboardFocusManager
+				.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(new ControllerInputHandler(this, manager));
 	}
+	
+	public ControllerState getState()
+	{
+		return myState;
+	}
+	
+	public void setState(ControllerState state)
+	{
+		myState = state;
+	}
+	
+	public MessageSender getMessageSender()
+	{
+		return messageSender;
+	}
+	
+	public Timer getMessageTimer()
+	{
+		return msgTimer;
+	}
+	
+	public GraphicsInterface getInterface()
+	{
+		return myGraphics;
+	}
+	
 }

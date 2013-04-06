@@ -11,8 +11,13 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
+
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -21,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -52,21 +58,9 @@ public class CommPanel extends JPanel
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (ClassNotFoundException e)
+		catch (Exception e)
 		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (InstantiationException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (IllegalAccessException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
-		}
-		catch (UnsupportedLookAndFeelException e)
-		{
-			System.out.println("Could not load look and feel - continuing");
+			System.err.println("Could not load look and feel - continuing");
 		}
 		setLayout(new FlowLayout(FlowLayout.LEADING, 2, 2));
 		setPreferredSize(new Dimension(305, 400));
@@ -94,6 +88,23 @@ public class CommPanel extends JPanel
 		messageArea.setLineWrap(true);
 		messageArea.setEditable(false);
 		messageArea.setAutoscrolls(true);
+		
+		InputMap input = customMessage.getInputMap();
+		KeyStroke key = KeyStroke.getKeyStroke("ENTER");
+		
+		input.put(key, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				sendAndClear();
+				
+			}
+
+		});
+		
+		
+		
 		DefaultCaret caret = (DefaultCaret) messageArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		// add in scroll bars, set auto scroll
@@ -136,9 +147,7 @@ public class CommPanel extends JPanel
 		sendButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
-			{	myDriver.robotSim.setResponseMessage(customMessage.getText());
-				myDriver.robotSim.simulateResponse(customMessage.getText());
-				customMessage.setText("");
+			{	sendAndClear();
 			}
 		});
 		sendButton.setPreferredSize(new Dimension(215, 30));
@@ -163,6 +172,13 @@ public class CommPanel extends JPanel
 		panel.add(responsePanel);
 		// panel.add(customMessage);
 		return panel;
+	}
+	
+	private void sendAndClear()
+	{
+		myDriver.robotSim.setResponseMessage(customMessage.getText());
+		myDriver.robotSim.simulateResponse(customMessage.getText());
+		customMessage.setText("");
 	}
 	
 	public void disableAll()

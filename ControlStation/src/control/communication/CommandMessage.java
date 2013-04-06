@@ -16,6 +16,8 @@ public class CommandMessage extends Message
 	private Object		param;
 	private CommandType	command;
 	
+	private static int sequenceNumber = 0;
+	
 	/**
 	 * One parameter constructor to instantiate CommandMessage based on a CommandType
 	 * @param command			Type of command to create

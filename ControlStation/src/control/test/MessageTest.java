@@ -1,5 +1,7 @@
-package control.communication;
+package control.test;
 
+import control.communication.CommandMessage;
+import control.communication.ResponseMessage;
 import control.communication.CommandMessage.CommandType;
 
 public class MessageTest {
@@ -37,7 +39,7 @@ public class MessageTest {
 		ResponseMessage test = new ResponseMessage();
 		test = ResponseMessage.parse(responseTest);
 		//if(test!=null)
-		System.out.println("message string:"+test.messageString+ " "+"formattedString:"+test.formattedMessage);
+		System.out.println("message string:"+test.getMessageString()+ " "+"formattedString:"+test.getFormattedMessage());
 		
 		for(int j = 0; j < test.getFieldArray().length; ++j){
 			System.out.println(test.getFieldArray()[j] + test.getValueArray()[j]);

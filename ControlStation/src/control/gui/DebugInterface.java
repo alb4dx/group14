@@ -108,10 +108,10 @@ public class DebugInterface {
 	}
 
 	public DebugInterface(Controller contr) {
-		JFrame frame = new JFrame("ROBOT DEBUGGER");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 600);
-		frame.setLocation(650, 100);
+		myFrame = new JFrame("ROBOT DEBUGGER");
+		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		myFrame.setSize(500, 600);
+		myFrame.setLocation(650, 100);
 		
 		JPanel content = new JPanel();
 		content.setLayout(new GridLayout(1, 2));
@@ -197,8 +197,8 @@ public class DebugInterface {
 		content.add(left);
 		content.add(right);
 		
-		frame.setContentPane(content);
-		frame.setResizable(false);
+		myFrame.setContentPane(content);
+		myFrame.setResizable(false);
 		//frame.setVisible(true);
 	}
 	

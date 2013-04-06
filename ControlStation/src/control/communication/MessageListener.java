@@ -71,7 +71,6 @@ public class MessageListener implements Runnable
 		
 		while (true)
 		{
-			System.out.println("Listening");
 			// read from string to buffer, then append buffer to queue
 			
 			int len = inputListener.read(buffer);

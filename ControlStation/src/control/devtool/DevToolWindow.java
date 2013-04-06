@@ -28,7 +28,7 @@ public class DevToolWindow
 	
 	public RobotSimulator robotSim = null;
 	
-	@SuppressWarnings("unused")
+	//@SuppressWarnings("unused")
 	/**
 	 * The runnable part of the program -creates the Driver, which creates
 	 * every other part of the GUI
@@ -37,7 +37,7 @@ public class DevToolWindow
 	 */
 	public static void main(String[] args)
 	{
-		DevToolWindow driver = new DevToolWindow();
+		new DevToolWindow();
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class DevToolWindow
 		}
 		catch (Exception e)
 		{
-			System.out.println("Could not load look and feel - continuing");
+			System.err.println("Could not load look and feel - continuing");
 		}
 		// Setting main frame properties
 		myFrame = new JFrame("Development Tool - Testing");
