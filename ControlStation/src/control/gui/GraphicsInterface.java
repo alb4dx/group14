@@ -39,6 +39,19 @@ import control.data.InformationHandler;
  */
 public class GraphicsInterface
 {
+	
+
+	private JFrame				myFrame;			// The frame encompassing the whole GUI
+	private ChartPanel			dataGraph;			// The graph displaying past and present telemetry data
+	private JLabel				errorLabel;			// The label for the error section heading
+	private JLabel				locationLabel;		// The label for the location section heading
+	private JLabel				orientationLabel;  	// The label for the orientation section heading
+	private JTextArea			errorText;			// The JTextArea displaying the error responses from the robot
+	private JTextArea			locationText;		// The JTextArea displaying the location of the robot relative to its starting position
+	private JTextArea			orientationText;	// The JTextArea displaying the orientation of the robot relative to its starting position
+	private InformationHandler	myInfo;
+	
+	
 	public JFrame getMyFrame() {
 		return myFrame;
 	}
@@ -110,17 +123,6 @@ public class GraphicsInterface
 	public void setMyInfo(InformationHandler myInfo) {
 		this.myInfo = myInfo;
 	}
-
-	private JFrame				myFrame;			// The frame encompassing the whole GUI
-	private ChartPanel			dataGraph;			// The graph displaying past and present telemetry data
-	private JLabel				errorLabel;			// The label for the error section heading
-	private JLabel				locationLabel;		// The label for the location section heading
-	private JLabel				orientationLabel;  	// The label for the orientation section heading
-	private JTextArea			errorText;			// The JTextArea displaying the error responses from the robot
-	private JTextArea			locationText;		// The JTextArea displaying the location of the robot relative to its starting position
-	private JTextArea			orientationText;	// The JTextArea displaying the orientation of the robot relative to its starting position
-	private InformationHandler	myInfo;
-	
 	/**
 	 * The constructor for the GraphicsInterface object: it is 
 	 * called in Controller upon initialization and instantiates
@@ -233,9 +235,11 @@ public class GraphicsInterface
 	 * extract() is called from the Controller whenever new data 
 	 * is received in the Controller from MessageListener.
 	 */
+	
 	public void extract()
 	{
-		// TODO
+		// TODO graph does not update.
+		System.out.println("Im in extract");
 		this.dataGraph = (ChartPanel) this.myInfo.updateGraph();
 		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
 		int heading = this.myInfo.getHeading();
@@ -268,9 +272,13 @@ public class GraphicsInterface
 		case -180: direction = "S";
 				break;
 		}
-		this.locationText.setText(direction);
+		this.orientationText.setText(direction);
 		this.myFrame.invalidate();
 		this.myFrame.validate();
 		this.myFrame.repaint();
+		//this doesn't work:(
+//		this.dataGraph.invalidate();
+//		this.dataGraph.validate();
+//		this.dataGraph.repaint();
 	}
 }

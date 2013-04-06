@@ -8,7 +8,7 @@ public class MessageTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//CommandMessage msg = new CommandMessage(CommandType.INIT);
+		CommandMessage msg = new CommandMessage(CommandType.QUERY);
 		/*CommandMessage msg = new CommandMessage(CommandType.CLAW, 0.25);
 		//int msgCheck=0;
 		//for(int i=0; i<msg.messageString.length();++i){
@@ -24,7 +24,9 @@ public class MessageTest {
 		System.out.println("formattedString:"+msg2.getFormattedMessage());
 		System.out.println("SeqNum:"+msg2.getSeqNum());
 		System.out.println("command:"+msg2.getCommand());*/
-		String responseTest ="0updr&distance:5&light:5&sound:5&touch:1&claw:0.25&heading:5&speed:5&ultrasonic:5&connectionStatus:1&motorA:350&motorB:355&motorC:360";
+		System.out.println("messageString:"+msg.getMessageString());
+		System.out.println("formattedString:"+msg.getFormattedMessage());
+		String responseTest ="1data&distance:5&light:10&sound:15&touch:1&claw:0.0&heading:30&speed:360&ultrasonic:10";
 		int sum2=0;
 		for(int i=0; i<responseTest.length();++i){
 			sum2 +=responseTest.charAt(i);

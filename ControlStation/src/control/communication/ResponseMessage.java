@@ -171,7 +171,7 @@ public class ResponseMessage extends Message
 			}
 			else if (response.compareTo("data") == 0)
 			{
-				// System.out.println("its a data msg");
+				//System.out.println("its a data msg");
 				msg.response = ResponseType.DATA;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));

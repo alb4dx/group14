@@ -42,8 +42,8 @@ public class CommPanel extends JPanel
 	private JTextArea		messageArea;
 	String[]				mySensors	=
 										{ "0", "0", "0", "0", "0", "0", "0" };
-	private JTextPane		customMessage;
-	
+	//private JTextPane		customMessage;
+	private JTextArea		customMessage;
 	public CommPanel(DevToolWindow driver)
 	{
 		myDriver = driver;
@@ -136,22 +136,26 @@ public class CommPanel extends JPanel
 		sendButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
-			{
+			{	myDriver.robotSim.setResponseMessage(customMessage.getText());
 				myDriver.robotSim.simulateResponse(customMessage.getText());
 				customMessage.setText("");
 			}
 		});
 		sendButton.setPreferredSize(new Dimension(215, 30));
 		myComps.add(sendButton);
-		customMessage = new JTextPane();
-		customMessage
-				.setDocument(new CustomDoc(customMessage, 100, this, true));
+		customMessage = new JTextArea();
+		//customMessage
+			//	.setDocument(new CustomDoc(customMessage, 100, this, true));
+		JScrollPane customMessageScroller = new JScrollPane(customMessage);
+		customMessageScroller.setPreferredSize(new Dimension(215, 60));
+		myComps.add(customMessageScroller);
 		customMessage.setFont(new Font("Arial", Font.PLAIN, 15));
-		customMessage.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2,
-				Color.black));
-		customMessage.setPreferredSize(new Dimension(215, 25));
+		//customMessage.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2,
+		//		Color.black));
+		customMessage.setPreferredSize(new Dimension(215, 100));
+		customMessage.setLineWrap(true);
 		myComps.add(customMessage);
-		responsePanel.add(customMessage);
+		responsePanel.add(customMessageScroller);
 		responsePanel.add(fillerPanel);
 		responsePanel.add(sendButton);
 		panel.add(commLabel);
@@ -369,11 +373,11 @@ public class CommPanel extends JPanel
 		this.mySensors = mySensors;
 	}
 
-	public JTextPane getCustomMessage() {
+	public JTextArea getCustomMessage() {
 		return customMessage;
 	}
 
-	public void setCustomMessage(JTextPane customMessage) {
+	public void setCustomMessage(JTextArea customMessage) {
 		this.customMessage = customMessage;
 	}
 
