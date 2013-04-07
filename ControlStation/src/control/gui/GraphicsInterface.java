@@ -42,7 +42,7 @@ public class GraphicsInterface
 	
 
 	private JFrame				myFrame;			// The frame encompassing the whole GUI
-	private ChartPanel			dataGraph;			// The graph displaying past and present telemetry data
+	private ChartPanel			dataPanel;			// The graph displaying past and present telemetry data
 	private JLabel				errorLabel;			// The label for the error section heading
 	private JLabel				locationLabel;		// The label for the location section heading
 	private JLabel				orientationLabel;  	// The label for the orientation section heading
@@ -61,11 +61,11 @@ public class GraphicsInterface
 	}
 
 	public JPanel getDataGraph() {
-		return dataGraph;
+		return dataPanel;
 	}
 
 	public void setDataGraph(JPanel dataGraph) {
-		this.dataGraph = (ChartPanel) dataGraph;
+		this.dataPanel = (ChartPanel) dataGraph;
 	}
 
 	public JLabel getErrorLabel() {
@@ -150,8 +150,8 @@ public class GraphicsInterface
 		content.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 		content.setPreferredSize(new Dimension(600, 500));
 		 
-		dataGraph = (ChartPanel) myInfo.updateGraph();
-		dataGraph.setPreferredSize(new Dimension(450, 200));
+		dataPanel = myInfo.getPanel();
+		dataPanel.setPreferredSize(new Dimension(450, 200));
 		//dataGraph.setBackground(Color.blue);
 	
 		errorLabel = new JLabel("Error Log:");
@@ -218,7 +218,7 @@ public class GraphicsInterface
 		
 		errorPanel.add(locPanel);
 		
-		content.add(dataGraph);
+		content.add(dataPanel);
 		content.add(errorPanel);
 		
 		myFrame.setContentPane(content);
@@ -240,7 +240,7 @@ public class GraphicsInterface
 	{
 		// TODO graph does not update.
 		System.out.println("Im in extract");
-		this.dataGraph = (ChartPanel) this.myInfo.updateGraph();
+		myInfo.updateGraph();
 		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
 		int heading = this.myInfo.getHeading();
 		String direction="";
