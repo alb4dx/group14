@@ -3,6 +3,7 @@ package control.data;
 import org.jfree.data.general.Dataset;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
@@ -18,7 +19,6 @@ import java.awt.color.*;
 import javax.swing.JPanel;
 
 import java.awt.Color;
-
 /**
  * Used to hold all of the data received from the robot and does any necessary
  * calculations
@@ -261,7 +261,11 @@ public class InformationHandler
 		
 	}// end addData function
 	
-	// Create XY series of Light data
+
+	/**
+	 * Helper method to create XYSeries of Light data
+	 * @return XYSeries of int Light data from dataList
+	 */
 	private XYSeries createLightSeries()
 	{
 		
@@ -277,6 +281,10 @@ public class InformationHandler
 	}
 	
 	// Create XY series of sound data
+	/**
+	 * Helper method to create XYSeries of sound data
+	 * @return XYSeries of int sound data from dataList
+	 */
 	private XYSeries createSoundSeries()
 	{
 		
@@ -291,6 +299,10 @@ public class InformationHandler
 	}
 	
 	// Create XY series of Ultrasonic (US) data
+	/**
+	 * Helper method to Create XY series of Ultrasonic data
+	 * @return XYSeries of int ultrasonic data from dataList
+	 */
 	private XYSeries createUltrasonicSeries()
 	{
 		
@@ -304,6 +316,10 @@ public class InformationHandler
 		return (uSonicSeries);
 	}
 	
+	/**
+	 * Helper method to Create XY series of Touch data
+	 * @return XYSeries of int touch data from dataList (100==true, 0==false)
+	 */
 	private XYSeries createTouchSeries() {
 		XYSeries touchSeries = new XYSeries("Touch");
 		for(int i = dataList.size() - 1; i > 0; i--) {
@@ -312,6 +328,11 @@ public class InformationHandler
 		return (touchSeries);
 	}
 	
+	/**
+	 * Helper method to create line graph of telemetry data
+	 * @param dataset Dataset of all telemetry DataSeries 
+	 * @return JFreeChart line graph of telemetry data
+	 */
 	private JFreeChart createChart(XYDataset dataset){
 
 		
@@ -330,8 +351,7 @@ public class InformationHandler
 		// Chart Customization
 		
 		graph.setBackgroundPaint(Color.WHITE);
-		//StandardLegend legend = (StandardLegend) chart.getLegend();
-		//legend.setDisplaySeriesShapes(true);
+		LegendTitle legend = graph.getLegend();
 
 		
 		XYPlot plot = (XYPlot) graph.getXYPlot();
