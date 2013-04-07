@@ -279,8 +279,13 @@ public class Controller
 			}
 			addMessage(cmd);
 			if (myState == ControllerState.CANSEND)
-			{
+			{	
+				if(cmd.getCommand() == CommandType.INIT){
+					myState = ControllerState.CONNECTING;
+				}
+				else{
 				myState = ControllerState.WAITACK1;
+				}
 				msgTimer.start();
 				System.out.println(cmd.getMessageString());
 				messageSender.send(cmd);
@@ -312,8 +317,37 @@ public class Controller
 		System.out.println("Message Received:" + r.getFormattedMessage());
 		this.myDebug.getMyResponse().getMyResponses()
 				.append(r.getMessageString());
+		// this still uses the messageQueue in controller to send
+		// messages
+		if (r.getResponse() == ResponseType.ERROR
+				&& r.getSeqNum() == this.seq)
+		{
+			CommandMessage filler = new CommandMessage(CommandType.ACK);
+			CommandMessage ack = new CommandMessage(CommandType.ACK);
+			// messageQueue.add(ack);
+			messageSender.send(ack);
+			myDebug.display();
+			myDebug.getMyFrame().invalidate();
+			myDebug.getMyFrame().validate();
+			myDebug.getMyFrame().repaint();
+			myState = ControllerState.DEBUG;
+		}
 		switch (myState)
 		{
+			case CONNECTING:
+				if (r.getResponse() == ResponseType.ACK
+				&& r.getSeqNum() == this.seq)
+				{
+					msgTimer.stop();
+				}
+				else if (r.getResponse() == ResponseType.CONN && r.getSeqNum() == this.seq){
+					messageQueue.remove();
+					respondToDoneFail();
+				}
+				else if (r.getResponse() == ResponseType.NACK && r.getSeqNum() == this.seq){
+					resend();
+				}
+				break;
 			case WAITACK1:
 				if (r.getResponse() == ResponseType.ACK
 						&& r.getSeqNum() == this.seq)
@@ -321,7 +355,6 @@ public class Controller
 					msgTimer.stop();
 					if (messageQueue.peek().getCommand() == CommandType.QUERY)
 					{
-						msgTimer.restart();
 						myState = ControllerState.WAITDATA;
 					}
 					else
@@ -359,11 +392,8 @@ public class Controller
 					myGraphics.getMyInfo().setHeading(heading);
 					myGraphics.getMyInfo().setSpeed(speed);
 					myGraphics.extract();
-					myState = ControllerState.WAITACK2;
-				}
-				else
-				{
-					resend();
+					messageQueue.remove();
+					respondToDoneFail();
 				}
 			break;
 			case WAITACK2:
@@ -375,55 +405,9 @@ public class Controller
 					{
 						System.out.println(r.getMessageString());
 					}
-					if (this.seq == 0)
-					{
-						this.seq = 1;
-					}
-					else
-					{
-						this.seq = 0;
-					}
-					if (messageQueue.peek() == null)
-					{
-						// testing robot timeout
-						/*
-						 * try {
-						 * Thread.sleep(11000);
-						 * } catch (InterruptedException e) {
-						 * // TODO Auto-generated catch block
-						 * e.printStackTrace();
-						 * }
-						 */
-						CommandMessage filler = new CommandMessage(
-								CommandType.ACK);
-						CommandMessage ack = new CommandMessage(CommandType.ACK);
-						// messageQueue.add(ack);
-						myState = ControllerState.CANSEND;
-						messageSender.send(ack);
-						
-					}
-					else
-					{
-						myState = ControllerState.WAITACK1;
-						msgTimer.restart();
-						messageSender.send(messageQueue.peek());
-					}
+					respondToDoneFail();
 				}
-				// this still uses the messageQueue in controller to send
-				// messages
-				else if (r.getResponse() == ResponseType.ERROR
-						&& r.getSeqNum() == this.seq)
-				{
-					CommandMessage filler = new CommandMessage(CommandType.ACK);
-					CommandMessage ack = new CommandMessage(CommandType.ACK);
-					// messageQueue.add(ack);
-					messageSender.send(ack);
-					myDebug.display();
-					myDebug.getMyFrame().invalidate();
-					myDebug.getMyFrame().validate();
-					myDebug.getMyFrame().repaint();
-					myState = ControllerState.DEBUG;
-				}
+				
 			break;
 			// TODO im too tired to think
 			case DEBUG:
@@ -445,10 +429,6 @@ public class Controller
 		msgTimer.stop();
 		msgTimer.restart();
 		// will crash if front of queue empty
-		if (myState == ControllerState.WAITDATA)
-		{
-			myState = ControllerState.WAITACK1;
-		}
 		System.out.println("Resending:"
 				+ messageQueue.element().getMessageString());
 		messageSender.send(messageQueue.element());
@@ -456,9 +436,34 @@ public class Controller
 	
 	public enum ControllerState
 	{
-		CANSEND, WAITACK1, WAITDATA, WAITACK2, DEBUG
+		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG
 	}
 	
+	public void respondToDoneFail(){
+		if (this.seq == 0)
+		{
+			this.seq = 1;
+		}
+		else
+		{
+			this.seq = 0;
+		}
+		if (messageQueue.peek() == null)
+		{
+			CommandMessage filler = new CommandMessage(
+					CommandType.ACK);
+			CommandMessage ack = new CommandMessage(CommandType.ACK);
+			myState = ControllerState.CANSEND;
+			messageSender.send(ack);
+			
+		}
+		else
+		{
+			myState = ControllerState.WAITACK1;
+			msgTimer.restart();
+			messageSender.send(messageQueue.peek());
+		}
+	}
 	public void onInvalidMessage(String str)
 	{
 		System.err.println("Corrupted message received: " + str);

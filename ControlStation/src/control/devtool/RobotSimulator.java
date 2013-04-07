@@ -116,17 +116,14 @@ public class RobotSimulator
 		myWindow.getComm().getMessageArea().append("\n"+"Message Sent:"+msg.getFormattedMessage());
 		if(myState == RobotState.SENDINGRESPONSE1){
 			//System.out.println("state is"+RobotState.SENDINGRESPONSE2);
-			
+			if(msg.getResponse() != ResponseType.NACK)
 			myState = RobotState.SENDINGRESPONSE2;
 			
 		}
 		else if(myState == RobotState.SENDINGRESPONSE2){
 			//System.out.println("state is"+RobotState.WAITCOMMAND);
-			if(msg.getResponse() != ResponseType.DATA){
-				System.out.println("repsonse not data");
-				myState = RobotState.WAITCOMMAND;
-				msgTimer.start();
-			}
+			myState = RobotState.WAITCOMMAND;
+			msgTimer.start();
 		}
 		else if (myState == RobotState.WAITCOMMAND){
 			msgTimer.restart();
