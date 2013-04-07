@@ -3,7 +3,6 @@ package control.data;
 import org.jfree.data.general.Dataset;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
@@ -11,14 +10,17 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.color.*;
 import javax.swing.JPanel;
 
 import java.awt.Color;
+
 /**
  * Used to hold all of the data received from the robot and does any necessary
  * calculations
@@ -39,7 +41,15 @@ public class InformationHandler
 	private int speed;
 	private JFreeChart graph;
 	private DataPoint currentData;
-	private ArrayList<DataPoint> dataList;
+	private List<DataPoint> dataList;
+	private ChartPanel panel;
+	
+	private XYSeries lightSeries = new XYSeries("Light");
+	private XYSeries soundSeries = new XYSeries("Sound");
+	private XYSeries uSonicSeries = new XYSeries("Ultrasonic");
+	private XYSeries touchSeries = new XYSeries("Touch");
+	
+	private XYSeriesCollection graphDataCollection = new XYSeriesCollection();
 	
 	/**
 	 * The constructor for InformationHandler: created upon an
@@ -52,10 +62,10 @@ public class InformationHandler
 		claw = 0;
 		heading = 0;
 		speed = 0;
-		graph = null;
 		currentData = null;
-		dataList = new ArrayList<DataPoint>();
-		
+		dataList = new LinkedList<DataPoint>();
+		initGraph();
+		panel = new ChartPanel(graph);
 	}
 	
 	/**
@@ -123,7 +133,7 @@ public class InformationHandler
 	 * 
 	 * @return ArrayList of DataPoints
 	 */
-	public ArrayList<DataPoint> getDataList()
+	public List<DataPoint> getDataList()
 	{
 		return dataList;
 	}
@@ -205,15 +215,19 @@ public class InformationHandler
 		this.dataList = list;
 	}
 	
+	public ChartPanel getPanel()
+	{
+		return panel;
+	}
+
 	/**
 	 * Graph update method
 	 * 
 	 * @return Updated JPanel based on new telemetry data
 	 */
-	public JPanel updateGraph()
+	public void updateGraph()
 	{
-		XYDataset dataset=new XYSeriesCollection();
-		
+
 		//setContentPane(chartPanel);
 
 		
@@ -225,18 +239,14 @@ public class InformationHandler
 		
 		// Key - shows which each colored line means as well as T/Fs
 		
-		((XYSeriesCollection) dataset).addSeries(this.createLightSeries());
-		((XYSeriesCollection) dataset).addSeries(this.createSoundSeries());
-		((XYSeriesCollection) dataset).addSeries(this.createUltrasonicSeries());
-		((XYSeriesCollection) dataset).addSeries(this.createTouchSeries());
 		
-		JFreeChart chart = createChart(dataset);
-		ChartPanel chartPanel = new ChartPanel(chart, false);
-		chartPanel.setPreferredSize(new Dimension(450, 200)); 
 		
-		chart = createChart(dataset);
+		updateAllSubSeries();
 		
-		return chartPanel;
+		System.out.println("Data list size: " + dataList.size());
+		System.out.println("Light series size: " + lightSeries.getItemCount());
+		
+		//return panel;
 	}
 	
 	/**
@@ -261,86 +271,36 @@ public class InformationHandler
 		
 	}// end addData function
 	
-
-	/**
-	 * Helper method to create XYSeries of Light data
-	 * @return XYSeries of int Light data from dataList
-	 */
-	private XYSeries createLightSeries()
+	private void updateAllSubSeries()
 	{
+		lightSeries.clear();
+		soundSeries.clear();
+		uSonicSeries.clear();
+		touchSeries.clear();
 		
-		XYSeries lightSeries = new XYSeries("Light");
-		int first=dataList.size() - 1;
-
-		
-		for (int i = first; i > 0; i--)
+		int i = 0;
+		for(DataPoint d : dataList)
 		{
-			lightSeries.add(i, dataList.get(i).getLight());
+			lightSeries.add(i,d.getLight());
+			soundSeries.add(i,d.getSound());
+			uSonicSeries.add(i,d.getUltrasonic());
+			touchSeries.add(i,d.getTouch());
+			i++;
 		}
-		return (lightSeries);
 	}
 	
-	// Create XY series of sound data
-	/**
-	 * Helper method to create XYSeries of sound data
-	 * @return XYSeries of int sound data from dataList
-	 */
-	private XYSeries createSoundSeries()
-	{
-		
-		XYSeries soundSeries = new XYSeries("Sound");
-		int first = dataList.size() - 1;
-		
-		for (int i = first; i > 0; i--)
-		{
-			soundSeries.add(i, dataList.get(i).getSound());
-		}
-		return (soundSeries);
-	}
-	
-	// Create XY series of Ultrasonic (US) data
-	/**
-	 * Helper method to Create XY series of Ultrasonic data
-	 * @return XYSeries of int ultrasonic data from dataList
-	 */
-	private XYSeries createUltrasonicSeries()
-	{
-		
-		XYSeries uSonicSeries = new XYSeries("Ultrasonic");
-		int first = dataList.size() - 1;
-		
-		for(int i=first;i>0;i--){
-			uSonicSeries.add(i,dataList.get(i).getUltrasonic());
+	private void initGraph(){
 
-		}
-		return (uSonicSeries);
-	}
-	
-	/**
-	 * Helper method to Create XY series of Touch data
-	 * @return XYSeries of int touch data from dataList (100==true, 0==false)
-	 */
-	private XYSeries createTouchSeries() {
-		XYSeries touchSeries = new XYSeries("Touch");
-		for(int i = dataList.size() - 1; i > 0; i--) {
-			touchSeries.add(i, dataList.get(i).getTouch());
-		}
-		return (touchSeries);
-	}
-	
-	/**
-	 * Helper method to create line graph of telemetry data
-	 * @param dataset Dataset of all telemetry DataSeries 
-	 * @return JFreeChart line graph of telemetry data
-	 */
-	private JFreeChart createChart(XYDataset dataset){
-
+		graphDataCollection.addSeries(lightSeries);
+		graphDataCollection.addSeries(soundSeries);
+		graphDataCollection.addSeries(uSonicSeries);
+		graphDataCollection.addSeries(touchSeries);
 		
 		graph = ChartFactory.createXYLineChart(
 				"Telemetry Log",	// chart title
 				"Data Point",			// x axis label
 				"Sensor Reading",			// y axis label
-				dataset,		// data
+				graphDataCollection,		// data
 				PlotOrientation.VERTICAL,
 				true,			// include legend
 				true,			// tool tips
@@ -351,7 +311,8 @@ public class InformationHandler
 		// Chart Customization
 		
 		graph.setBackgroundPaint(Color.WHITE);
-		LegendTitle legend = graph.getLegend();
+		//StandardLegend legend = (StandardLegend) chart.getLegend();
+		//legend.setDisplaySeriesShapes(true);
 
 		
 		XYPlot plot = (XYPlot) graph.getXYPlot();
@@ -366,7 +327,5 @@ public class InformationHandler
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-		
-		return graph;
 	}
 }// end Information Handler class

@@ -29,7 +29,7 @@ public class ControlTest {
 		//testHandler.addData(200,200,200,false); //12 - ...
 		
 		//Create test frame
-		ChartPanel testPanel = (ChartPanel) testHandler.updateGraph();
+		ChartPanel testPanel = testHandler.getPanel();
 		//testPanel=testHandler.getGraph();
 		
 		//Create test Frame

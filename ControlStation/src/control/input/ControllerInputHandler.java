@@ -41,6 +41,9 @@ public class ControllerInputHandler implements KeyEventDispatcher
 			case KeyEvent.VK_RIGHT:
 				cmd = new CommandMessage(CommandType.TURN, controller.TURNRIGHT);
 			break;
+			case KeyEvent.VK_SPACE:
+				cmd = new CommandMessage(CommandType.CLAW, 1.0f);
+			break;
 		}
 		
 		return cmd;
@@ -55,6 +58,9 @@ public class ControllerInputHandler implements KeyEventDispatcher
 			case KeyEvent.VK_UP:
 				cmd = new CommandMessage(CommandType.STOP);
 			break;
+			case KeyEvent.VK_SPACE:
+				cmd = new CommandMessage(CommandType.CLAW, 0.0f);
+			break;
 		}
 		
 		return cmd;
@@ -67,7 +73,7 @@ public class ControllerInputHandler implements KeyEventDispatcher
 		{
 			controller.setState(ControllerState.WAITACK1);
 			controller.getMessageTimer().start();
-			System.out.println(cmd.getMessageString());
+			///System.out.println(cmd.getMessageString());
 			controller.getMessageSender().send(cmd);
 		}
 	}
@@ -75,7 +81,7 @@ public class ControllerInputHandler implements KeyEventDispatcher
 	private void keyPressed(KeyEvent e)
 	{
 		
-		System.out.println("Key pressed: " + e);
+		//System.out.println("Key pressed: " + e);
 		
 		CommandMessage cmd = messageOnKeyPress(e.getKeyCode());
 		
