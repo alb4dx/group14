@@ -467,6 +467,7 @@ public class Controller
 	public void onInvalidMessage(String str)
 	{
 		System.err.println("Corrupted message received: " + str);
+		if(myState != ControllerState.WAITACK2 || myState !=ControllerState.WAITDATA)
 		resend();
 	}
 	
