@@ -96,7 +96,7 @@ public class Controller
 	public final int						TURNRIGHT		= TURNSPEED;
 	
 	private boolean							debugMode		= false;
-	
+
 	public static void main(String[] args)
 	{
 		

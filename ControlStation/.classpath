@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="lib/bluecove.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/jinput-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
