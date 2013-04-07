@@ -51,6 +51,24 @@ import control.devtool.DevToolWindow;
  * controller sends command messages from DebugInterface and
  */
 
+//TODO
+/*
+ * Extract(): does not update the graph, and the error log
+ * DebugInterface: Finish this
+ * DebugMessages: make controller be able to handle this
+ * Xbox Controller: everything
+ * -Only movement messages have key listeners as of now
+ * -javadoc the new methods
+ * Controller: implement the Query Timer
+ * -solidify the control scheme
+ * Handle loss of communication - try to reconnect 5 times then shut off
+ * java docs
+ * update design doc
+ *
+ * Suggestion:
+ * Generalize the error log in Graphics Interface to show all response messages to the user
+ */
+
 // TODO extract doesnt update the graph, figure out how to bring up the debug
 // interface on error message
 public class Controller
