@@ -202,7 +202,7 @@ public class ResponseMessage extends Message
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
-				float claw = Float.parseFloat(responseString.substring(
+				int claw = Integer.parseInt(responseString.substring(
 						endClaw + 1, responseString.indexOf("&", endClaw)));
 				int endHeading = responseString.indexOf(":", endClaw + 1);
 				int heading = Integer
@@ -252,7 +252,7 @@ public class ResponseMessage extends Message
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
-				float claw = Float.parseFloat(responseString.substring(
+				int claw = Integer.parseInt(responseString.substring(
 						endClaw + 1, responseString.indexOf("&", endClaw)));
 				int endHeading = responseString.indexOf(":", endClaw + 1);
 				int heading = Integer

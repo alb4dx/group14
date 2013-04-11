@@ -36,7 +36,7 @@ import java.awt.Color;
 public class InformationHandler
 {
 	private int distance;
-	private float claw;
+	private int claw;
 	private int heading;
 	private int speed;
 	private JFreeChart graph;
@@ -155,7 +155,7 @@ public class InformationHandler
 	 * @param c
 	 *            float value for claw to set
 	 */
-	public void setClaw(float c)
+	public void setClaw(int c)
 	{
 		this.claw = c;
 	}

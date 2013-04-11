@@ -72,6 +72,7 @@ public class ControllerInputHandler implements KeyEventDispatcher
 		if (controller.getState() == ControllerState.CANSEND)
 		{
 			controller.setState(ControllerState.WAITACK1);
+			controller.getInterface().updateMessageLog(cmd, true);
 			controller.getMessageTimer().start();
 			///System.out.println(cmd.getMessageString());
 			controller.getMessageSender().send(cmd);

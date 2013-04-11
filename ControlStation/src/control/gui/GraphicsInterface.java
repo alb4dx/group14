@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -17,6 +19,7 @@ import javax.swing.border.Border;
 
 import org.jfree.chart.ChartPanel;
 
+import control.communication.Message;
 import control.data.InformationHandler;
 
 /**
@@ -43,14 +46,15 @@ public class GraphicsInterface
 
 	private JFrame				myFrame;			// The frame encompassing the whole GUI
 	private ChartPanel			dataPanel;			// The graph displaying past and present telemetry data
-	private JLabel				errorLabel;			// The label for the error section heading
+	private JLabel				messageLabel;		// The label for the message section heading
 	private JLabel				locationLabel;		// The label for the location section heading
 	private JLabel				orientationLabel;  	// The label for the orientation section heading
-	private JTextArea			errorText;			// The JTextArea displaying the error responses from the robot
+	private JTextArea			messageText;		// The JTextArea displaying the messages sent and received
 	private JTextArea			locationText;		// The JTextArea displaying the location of the robot relative to its starting position
 	private JTextArea			orientationText;	// The JTextArea displaying the orientation of the robot relative to its starting position
 	private InformationHandler	myInfo;
-	
+	private JLabel				speedLabel;
+	private JTextArea			speedText;
 	
 	public JFrame getMyFrame() {
 		return myFrame;
@@ -69,11 +73,11 @@ public class GraphicsInterface
 	}
 
 	public JLabel getErrorLabel() {
-		return errorLabel;
+		return messageLabel;
 	}
 
 	public void setErrorLabel(JLabel errorLabel) {
-		this.errorLabel = errorLabel;
+		this.messageLabel = errorLabel;
 	}
 
 	public JLabel getLocationLabel() {
@@ -92,12 +96,12 @@ public class GraphicsInterface
 		this.orientationLabel = orientationLabel;
 	}
 
-	public JTextArea getErrorText() {
-		return errorText;
+	public JTextArea getMessageText() {
+		return messageText;
 	}
 
-	public void setErrorText(JTextArea errorText) {
-		this.errorText = errorText;
+	public void setMessageText(JTextArea errorText) {
+		this.messageText = errorText;
 	}
 
 	public JTextArea getLocationText() {
@@ -122,6 +126,18 @@ public class GraphicsInterface
 
 	public void setMyInfo(InformationHandler myInfo) {
 		this.myInfo = myInfo;
+	}
+	
+	public void updateMessageLog(Message msg, boolean commandOrResponse){
+		if(commandOrResponse){
+			messageText.append("Message sent:"+msg.getMessageString()+'\n');
+		}
+		else{
+			messageText.append("Message received:"+msg.getMessageString()+'\n');
+		}
+//		messageText.invalidate();
+//		messageText.validate();
+//		messageText.repaint();
 	}
 	/**
 	 * The constructor for the GraphicsInterface object: it is 
@@ -154,29 +170,41 @@ public class GraphicsInterface
 		dataPanel.setPreferredSize(new Dimension(450, 200));
 		//dataGraph.setBackground(Color.blue);
 	
-		errorLabel = new JLabel("Error Log:");
-		errorLabel.setFont(new Font("Arial", Font.BOLD, 14));
+		messageLabel = new JLabel("Message Log:");
+		messageLabel.setFont(new Font("Arial", Font.BOLD, 14));
 		
-		JPanel errorPanel = new JPanel();
-		errorPanel.setPreferredSize(new Dimension(450, 200));
-		errorPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 10));
+		JPanel messagePanel = new JPanel();
+		messagePanel.setPreferredSize(new Dimension(450, 200));
+		messagePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 10));
 		
-		errorText = new JTextArea();
-		errorText.setFont(new Font("Arial", Font.PLAIN, 13));
-		errorText.setRows(5);
-		errorText.setColumns(15);
-		errorText.setLineWrap(true);
-		errorText.setEditable(false);
-		errorText.setPreferredSize(new Dimension(450, 50));
-		errorText.setAutoscrolls(true);
-		errorText.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+		messageText = new JTextArea();
+		messageText.setFont(new Font("Arial", Font.PLAIN, 13));
+		messageText.setRows(5);
+		messageText.setColumns(15);
+		messageText.setLineWrap(true);
+		messageText.setEditable(false);
+		messageText.setPreferredSize(new Dimension(450, 50));
+		messageText.setAutoscrolls(true);
+		//messageText.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		// add in scroll bars, set auto scroll
-		JScrollPane sp = new JScrollPane(errorText);
+		//TODO HALP STEPH HOW DO I MAKE THIS DYNAMICALLY GROW
+		JScrollPane sp = new JScrollPane(messageText);
+		sp.setAutoscrolls(true);
+		sp.getVerticalScrollBar().addAdjustmentListener(
+				new AdjustmentListener()
+				{
+					public void adjustmentValueChanged(AdjustmentEvent e)
+					{
+						e.getAdjustable().setValue(
+								e.getAdjustable().getValue());
+					}
+				});
 		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		sp.setPreferredSize(new Dimension(450, 50));
+		messagePanel.add(messageLabel);
+		//messagePanel.add(messageText);
+		messagePanel.add(sp);
 		
-		errorPanel.add(errorLabel);
-		errorPanel.add(errorText);
 		
 		JPanel locPanel = new JPanel();
 		locPanel.setPreferredSize(new Dimension(450, 80));
@@ -198,7 +226,7 @@ public class GraphicsInterface
 		locPanel.add(locationText);
 		
 		JPanel filler = new JPanel();
-		filler.setPreferredSize(new Dimension(168, 30));
+		filler.setPreferredSize(new Dimension(26, 20));
 		locPanel.add(filler);
 		
 		orientationLabel = new JLabel("Orientation:  ");
@@ -216,10 +244,29 @@ public class GraphicsInterface
 		locPanel.add(orientationLabel);
 		locPanel.add(orientationText);
 		
-		errorPanel.add(locPanel);
+		JPanel filler1 = new JPanel();
+		filler1.setPreferredSize(new Dimension(26, 20));
+		locPanel.add(filler1);
+		
+		speedLabel = new JLabel("Speed:  ");
+		speedLabel.setFont(new Font("Arial", Font.BOLD, 14));
+		
+		speedText = new JTextArea();
+		speedText.setFont(new Font("Arial", Font.PLAIN, 13));
+		speedText.setRows(1);
+		speedText.setColumns(5);
+		speedText.setLineWrap(true);
+		speedText.setEditable(false);
+		speedText.setPreferredSize(new Dimension(50, 30));
+		speedText.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+		
+		locPanel.add(speedLabel);
+		locPanel.add(speedText);
+		
+		messagePanel.add(locPanel);
 		
 		content.add(dataPanel);
-		content.add(errorPanel);
+		content.add(messagePanel);
 		
 		myFrame.setContentPane(content);
 		myFrame.setVisible(true);
@@ -242,36 +289,34 @@ public class GraphicsInterface
 		System.out.println("Im in extract");
 		myInfo.updateGraph();
 		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
+		this.speedText.setText(Integer.toString(this.myInfo.getSpeed()));
 		int heading = this.myInfo.getHeading();
 		String direction="";
-		switch(heading){
-		case 0: direction = "N";
-				break;
-		case 30: direction = "NE";
-				break;
-		case 60: direction = "NE";
-				break;
-		case 90: direction = "E";
-				break;
-		case 120: direction = "SE";
-				break;
-		case 150: direction = "SE";
-				break;
-		case 180: direction = "S";
-				break;
-		case -30: direction = "NW";
-				break;
-		case -60: direction = "NW";
-				break;
-		case -90: direction = "W";
-				break;
-		case -120: direction = "SW";
-				break;
-		case -150: direction = "SW";
-				break;
-		case -180: direction = "S";
-				break;
+		if(heading <= 15 && heading >= -15 ){
+			direction = "N";
 		}
+		else if(heading < -15 && heading > -75){
+			direction = "NW";
+		}
+		else if(heading <= -75 && heading >= -105){
+			direction = "W";
+		}
+		else if(heading <= -105 && heading > -165){
+			direction = "SW";
+		}
+		else if(heading <= -165 || heading >= 165){
+			direction = "S";
+		}
+		else if(heading < 165 && heading > 105){
+			direction = "SE";
+		}
+		else if(heading <= 105 && heading >= 75){
+			direction = "E";
+		}
+		else if(heading < 75 && heading > 15){
+			direction = "NE";
+		}
+		
 		this.orientationText.setText(direction);
 		this.myFrame.invalidate();
 		this.myFrame.validate();

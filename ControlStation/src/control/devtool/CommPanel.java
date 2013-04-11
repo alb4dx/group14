@@ -116,7 +116,7 @@ public class CommPanel extends JPanel
 					public void adjustmentValueChanged(AdjustmentEvent e)
 					{
 						e.getAdjustable().setValue(
-								e.getAdjustable().getMaximum());
+								e.getAdjustable().getValue());
 					}
 				});
 		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));

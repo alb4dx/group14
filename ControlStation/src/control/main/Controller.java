@@ -95,7 +95,7 @@ public class Controller
 	public final int						TURNLEFT		= -TURNSPEED;
 	public final int						TURNRIGHT		= TURNSPEED;
 	
-	private boolean							debugMode		= false;
+	private boolean							debugMode		= true;
 
 	public static void main(String[] args)
 	{
@@ -287,14 +287,15 @@ public class Controller
 				myState = ControllerState.WAITACK1;
 				}
 				msgTimer.start();
-				System.out.println(cmd.getMessageString());
+				//System.out.println(cmd.getMessageString());
+				myGraphics.updateMessageLog(cmd, true);
 				messageSender.send(cmd);
+				
 			}
 		}
 		
 	}
 	
-	// do we need to give UPDT priority??
 	public void addMessage(CommandMessage msg)
 	{
 		// add string to queue as message
@@ -314,7 +315,7 @@ public class Controller
 	{
 		// message listener calls whenever a message receives (hands controller
 		// received message
-		System.out.println("Message Received:" + r.getFormattedMessage());
+		myGraphics.updateMessageLog(r, false);
 		this.myDebug.getMyResponse().getMyResponses()
 				.append(r.getMessageString());
 		// this still uses the messageQueue in controller to send
@@ -334,6 +335,7 @@ public class Controller
 		}
 		switch (myState)
 		{
+		//TODO what do we do when we get a failure for init
 			case CONNECTING:
 				if (r.getResponse() == ResponseType.ACK
 				&& r.getSeqNum() == this.seq)
@@ -380,7 +382,7 @@ public class Controller
 					boolean touch = (Boolean) (r.getValueArray()[TOUCHINDEX]);
 					int ultra = (Integer) (r.getValueArray()[ULTRAINDEX]);
 					int distance = (Integer) (r.getValueArray()[DISTANCEINDEX]);
-					float claw = (Float) (r.getValueArray()[CLAWINDEX]);
+					int claw = (Integer) (r.getValueArray()[CLAWINDEX]);
 					int heading = (Integer) (r.getValueArray()[HEADINGINDEX]);
 					int speed = (Integer) (r.getValueArray()[SPEEDINDEX]);
 					
@@ -454,12 +456,14 @@ public class Controller
 					CommandType.ACK);
 			CommandMessage ack = new CommandMessage(CommandType.ACK);
 			myState = ControllerState.CANSEND;
+			myGraphics.updateMessageLog(ack, true);
 			messageSender.send(ack);
 			
 		}
 		else
 		{
 			myState = ControllerState.WAITACK1;
+			myGraphics.updateMessageLog(messageQueue.peek(), true);
 			msgTimer.restart();
 			messageSender.send(messageQueue.peek());
 		}

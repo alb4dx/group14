@@ -96,7 +96,7 @@ public class RobotSimulator
 			if(msgTimer.isRunning()){
 				msgTimer.stop();	
 			}
-			System.out.println("here");
+			//System.out.println("here");
 			if(!msg.substring(2, 5).equals("ack")){
 				//System.out.println("not ack so robot state is"+RobotState.SENDINGRESPONSE1);
 				myState = RobotState.SENDINGRESPONSE1;
