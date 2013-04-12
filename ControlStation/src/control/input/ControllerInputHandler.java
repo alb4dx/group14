@@ -134,8 +134,13 @@ public class ControllerInputHandler implements KeyEventDispatcher
 	{
 		controller.addMessage(cmd);
 		if (controller.getState() == ControllerState.CANSEND)
-		{
+		{	
+			if(cmd.getCommand() == CommandType.QUIT){
+				controller.setState(ControllerState.QUITTING);
+			}
+			else{
 			controller.setState(ControllerState.WAITACK1);
+			}
 			controller.getInterface().updateMessageLog(cmd, true);
 			controller.getMessageTimer().start();
 			///System.out.println(cmd.getMessageString());
