@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -216,84 +217,98 @@ public class Controller
 		
 		while (true)
 		{
-			System.out.println("Command:");
-			String command = scan.nextLine();
-			int endCommand = command.length();
-			CommandMessage cmd = null;
-			if (command.substring(0, command.length()).equals("init"))
-			{
-				cmd = new CommandMessage(CommandType.INIT);
-			}
-			else if (command.substring(0, command.length()).equals("stop"))
-			{
-				cmd = new CommandMessage(CommandType.STOP);
-			}
-			else if (command.substring(0, command.length()).equals("query"))
-			{
-				cmd = new CommandMessage(CommandType.QUERY);
-			}
-			else if (command.substring(0, command.length()).equals("powd"))
-			{
-				cmd = new CommandMessage(CommandType.POWD);
-			}
-			else if (command.substring(0, command.length()).equals("halt"))
-			{
-				cmd = new CommandMessage(CommandType.HALT);
-			}
-			else if (command.substring(0, command.length()).equals("quit"))
-			{
-				cmd = new CommandMessage(CommandType.QUIT);
-			}
-			else if (command.substring(0, command.length()).equals("ack"))
-			{
-				cmd = new CommandMessage(CommandType.ACK);
-			}
-			else if (command.substring(0, command.length()).equals("auto"))
-			{
-				cmd = new CommandMessage(CommandType.AUTO);
-			}
-			else if (command.substring(0, command.length()).equals("rset"))
-			{
-				cmd = new CommandMessage(CommandType.RSET);
-			}
-			else if (command.substring(0, command.length()).equals("updt"))
-			{
-				cmd = new CommandMessage(CommandType.UPDT);
-			}
-			else if (command.substring(0, command.indexOf(":")).equals("move"))
-			{
-				endCommand = command.indexOf(":");
-				cmd = new CommandMessage(CommandType.MOVE, command.substring(
-						endCommand + 1, command.length()));
-			}
-			else if (command.substring(0, command.indexOf(":")).equals("turn"))
-			{
-				endCommand = command.indexOf(":");
-				cmd = new CommandMessage(CommandType.TURN, command.substring(
-						endCommand + 1, command.length()));
-			}
-			else if (command.substring(0, command.indexOf(":")).equals("claw"))
-			{
-				endCommand = command.indexOf(":");
-				cmd = new CommandMessage(CommandType.CLAW, command.substring(
-						endCommand + 1, command.length()));
-			}
-			addMessage(cmd);
-			if (myState == ControllerState.CANSEND)
-			{	
-				if(cmd.getCommand() == CommandType.INIT){
-					myState = ControllerState.CONNECTING;
-				}
-				else{
-				myState = ControllerState.WAITACK1;
-				}
-				msgTimer.start();
-				//System.out.println(cmd.getMessageString());
-				myGraphics.updateMessageLog(cmd, true);
-				messageSender.send(cmd);
-				
-			}
+			if(myState == ControllerState.DISCONNECT) break;
+//			System.out.println("Command:");
+//			String command = scan.nextLine();
+//			
+//			int endCommand = command.length();
+//			CommandMessage cmd = null;
+//			if (command.substring(0, command.length()).equals("init"))
+//			{
+//				cmd = new CommandMessage(CommandType.INIT);
+//			}
+//			else if (command.substring(0, command.length()).equals("stop"))
+//			{
+//				cmd = new CommandMessage(CommandType.STOP);
+//			}
+//			else if (command.substring(0, command.length()).equals("query"))
+//			{
+//				cmd = new CommandMessage(CommandType.QUERY);
+//			}
+//			else if (command.substring(0, command.length()).equals("powd"))
+//			{
+//				cmd = new CommandMessage(CommandType.POWD);
+//			}
+//			else if (command.substring(0, command.length()).equals("halt"))
+//			{
+//				cmd = new CommandMessage(CommandType.HALT);
+//			}
+//			else if (command.substring(0, command.length()).equals("quit"))
+//			{
+//				cmd = new CommandMessage(CommandType.QUIT);
+//			}
+//			else if (command.substring(0, command.length()).equals("ack"))
+//			{
+//				cmd = new CommandMessage(CommandType.ACK);
+//			}
+//			else if (command.substring(0, command.length()).equals("auto"))
+//			{
+//				cmd = new CommandMessage(CommandType.AUTO);
+//			}
+//			else if (command.substring(0, command.length()).equals("rset"))
+//			{
+//				cmd = new CommandMessage(CommandType.RSET);
+//			}
+//			else if (command.substring(0, command.length()).equals("updt"))
+//			{
+//				cmd = new CommandMessage(CommandType.UPDT);
+//			}
+//			else if (command.substring(0, command.indexOf(":")).equals("move"))
+//			{
+//				endCommand = command.indexOf(":");
+//				cmd = new CommandMessage(CommandType.MOVE, command.substring(
+//						endCommand + 1, command.length()));
+//			}
+//			else if (command.substring(0, command.indexOf(":")).equals("turn"))
+//			{
+//				endCommand = command.indexOf(":");
+//				cmd = new CommandMessage(CommandType.TURN, command.substring(
+//						endCommand + 1, command.length()));
+//			}
+//			else if (command.substring(0, command.indexOf(":")).equals("claw"))
+//			{
+//				endCommand = command.indexOf(":");
+//				cmd = new CommandMessage(CommandType.CLAW, command.substring(
+//						endCommand + 1, command.length()));
+//			}
+//			addMessage(cmd);
+//			if (myState == ControllerState.CANSEND)
+//			{	
+//				if(cmd.getCommand() == CommandType.INIT){
+//					myState = ControllerState.CONNECTING;
+//				}
+//				else{
+//				myState = ControllerState.WAITACK1;
+//				}
+//				msgTimer.start();
+//				//System.out.println(cmd.getMessageString());
+//				myGraphics.updateMessageLog(cmd, true);
+//				messageSender.send(cmd);
+//				
+//			}
 		}
+		try
+		{
+			nxtComm.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println("Could not close NXT Comm. How did this happen??");
+			e.printStackTrace();
+		}
+		
+		System.out.println("Connection closed. Bye!");
+		System.exit(0);
 		
 	}
 	
@@ -412,8 +427,11 @@ public class Controller
 				}
 				
 			break;
-			// TODO im too tired to think
-			case DEBUG:
+			case QUITTING:
+				if (r.getResponse() == ResponseType.ACK && r.getSeqNum() == this.seq){
+					msgTimer.stop();
+					myState = ControllerState.DISCONNECT;
+				}
 			break;
 		}
 		// all robot responses given to debugger, which needs to send to robot
@@ -439,7 +457,7 @@ public class Controller
 	
 	public enum ControllerState
 	{
-		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING
+		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING, DISCONNECT
 	}
 	
 	public void respondToDoneFail(){
