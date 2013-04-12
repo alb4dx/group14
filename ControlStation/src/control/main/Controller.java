@@ -90,7 +90,8 @@ public class Controller
 	public final int						HEADINGINDEX	= 5;
 	public final int						SPEEDINDEX		= 6;
 	public final int						ULTRAINDEX		= 7;
-	public final int						SPEED			= 360;
+	public   	 int						SPEED			= 360;
+	public final int						MAXSPEED		= 720;
 	public final int						TURNSPEED		= 30;
 	public final int						TURNLEFT		= -TURNSPEED;
 	public final int						TURNRIGHT		= TURNSPEED;
@@ -438,7 +439,7 @@ public class Controller
 	
 	public enum ControllerState
 	{
-		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG
+		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING
 	}
 	
 	public void respondToDoneFail(){
@@ -477,126 +478,6 @@ public class Controller
 	
 	public void initInputHandler()
 	{
-//		KeyListener upKey = new KeyListener()
-//		{
-//			@Override
-//			public void keyTyped(KeyEvent e)
-//			{
-//			}
-//			
-//			@Override
-//			public void keyPressed(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//				if (e.getKeyCode() == KeyEvent.VK_UP)
-//				{
-//					CommandMessage cmd = new CommandMessage(CommandType.MOVE,
-//							SPEED);
-//					messageQueue.add(cmd);
-//					if (myState == ControllerState.CANSEND)
-//					{
-//						myState = ControllerState.WAITACK1;
-//						msgTimer.start();
-//						System.out.println(cmd.getMessageString());
-//						messageSender.send(cmd);
-//					}
-//				}
-//			}
-//			
-//			@Override
-//			public void keyReleased(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//				if (e.getKeyCode() == KeyEvent.VK_UP)
-//				{
-//					CommandMessage cmd = new CommandMessage(CommandType.STOP);
-//					messageQueue.add(cmd);
-//					if (myState == ControllerState.CANSEND)
-//					{
-//						myState = ControllerState.WAITACK1;
-//						msgTimer.start();
-//						System.out.println(cmd.getMessageString());
-//						messageSender.send(cmd);
-//					}
-//				}
-//			}
-//			
-//		};
-//		KeyListener leftKey = new KeyListener()
-//		{
-//			
-//			@Override
-//			public void keyTyped(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//			
-//			@Override
-//			public void keyPressed(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//			
-//			@Override
-//			public void keyReleased(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//				if (e.getKeyCode() == KeyEvent.VK_LEFT)
-//				{
-//					CommandMessage cmd = new CommandMessage(CommandType.TURN,
-//							TURNLEFT);
-//					messageQueue.add(cmd);
-//					if (myState == ControllerState.CANSEND)
-//					{
-//						myState = ControllerState.WAITACK1;
-//						msgTimer.start();
-//						System.out.println(cmd.getMessageString());
-//						messageSender.send(cmd);
-//					}
-//				}
-//			}
-//			
-//		};
-//		
-//		KeyListener rightKey = new KeyListener()
-//		{
-//			
-//			@Override
-//			public void keyTyped(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//			
-//			@Override
-//			public void keyPressed(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//			
-//			@Override
-//			public void keyReleased(KeyEvent e)
-//			{
-//				// TODO Auto-generated method stub
-//				if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-//				{
-//					CommandMessage cmd = new CommandMessage(CommandType.TURN,
-//							TURNRIGHT);
-//					messageQueue.add(cmd);
-//					if (myState == ControllerState.CANSEND)
-//					{
-//						myState = ControllerState.WAITACK1;
-//						msgTimer.start();
-//						System.out.println(cmd.getMessageString());
-//						messageSender.send(cmd);
-//					}
-//				}
-//			}
-//			
-//		};
-		
-		// myGraphics.getMyFrame().getContentPane().addKeyListener(upKey);
-		// myGraphics.getMyFrame().getContentPane().addKeyListener(leftKey);
-		// myGraphics.getMyFrame().getContentPane().addKeyListener(rightKey);
 		KeyboardFocusManager manager = KeyboardFocusManager
 				.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new ControllerInputHandler(this, manager));

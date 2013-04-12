@@ -1,6 +1,7 @@
 package control.input;
 
 import java.awt.KeyEventDispatcher;
+
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.util.Set;
@@ -43,6 +44,69 @@ public class ControllerInputHandler implements KeyEventDispatcher
 			break;
 			case KeyEvent.VK_SPACE:
 				cmd = new CommandMessage(CommandType.CLAW, 1.0f);
+			break;
+			case KeyEvent.VK_1:
+				controller.SPEED = controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_2:
+				controller.SPEED = 2*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_3:
+				controller.SPEED = 3*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_4:
+				controller.SPEED = 4*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_5:
+				controller.SPEED = 5*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_6:
+				controller.SPEED = 6*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_7:
+				controller.SPEED = 7*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_8:
+				controller.SPEED = 8*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_9:
+				controller.SPEED = 9*controller.MAXSPEED/10;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_0:
+				controller.SPEED = controller.MAXSPEED;
+				System.out.println(controller.SPEED);
+				if(!keysDown.contains(KeyEvent.VK_UP)) return null;
+				cmd = new CommandMessage(CommandType.MOVE, controller.SPEED);
+			break;
+			case KeyEvent.VK_ESCAPE:
+				cmd = new CommandMessage(CommandType.QUIT);
 			break;
 		}
 		
