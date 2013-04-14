@@ -1,5 +1,12 @@
 package control.input;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+
+import control.communication.CommandMessage;
+import control.communication.CommandMessage.CommandType;
+import control.communication.MessageSender;
+import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
@@ -10,13 +17,41 @@ import net.java.games.input.Event;
 public class GameControllerThread extends Thread
 {
 	
-	private final Event	event				= new Event();
-	static final int	EVENT_QUEUE_SIZE	= 12;
+	private final Event		event				= new Event();
+	static final int		EVENT_QUEUE_SIZE	= 12;
+	private Point2D.Float	lStick				= new Point2D.Float();
+	private Point2D.Float	rStick				= new Point2D.Float();
+	
+	private Component		lsx;
+	private Component		lsy;
+	private Component		rsx;
+	private Component		rsy;
+	
+	static final String		LS_X_ID				= "x";
+	static final String		LS_Y_ID				= "y";
+	static final String		RS_X_ID				= "rx";
+	static final String		RS_Y_ID				= "ry";
+	
+	static final float		STICK_DEADZONE		= .3f;
+	
+	int move,turn,claw;
+	int lastMove,lastTurn,lastClaw;
+	
+	private control.main.Controller	myControl;
+	
+	static final int MAX_MOVE = control.main.Controller.MAXSPEED;
+	static final int MAX_TURN = control.main.Controller.MAXTURN;
+	private static final float	MAX_CLAW	= 360;
 	
 	public static void main(String[] args)
 	{
-		GameControllerThread g = new GameControllerThread();
+		GameControllerThread g = new GameControllerThread(null);
 		g.start();
+	}
+	
+	public GameControllerThread(control.main.Controller control)
+	{
+		myControl = control;
 	}
 	
 	public void run()
@@ -49,6 +84,27 @@ public class GameControllerThread extends Thread
 		
 		pad.setEventQueueSize(EVENT_QUEUE_SIZE);
 		
+		for (Component c : pad.getComponents())
+		{
+			String id = c.getIdentifier().getName();
+			if (id.equals(LS_X_ID))
+			{
+				lsx = c;
+			}
+			else if (id.equals(LS_Y_ID))
+			{
+				lsy = c;
+			}
+			else if (id.equals(RS_X_ID))
+			{
+				rsx = c;
+			}
+			else if (id.equals(RS_Y_ID))
+			{
+				rsy = c;
+			}
+		}
+		
 		while (true)
 		{
 			try
@@ -63,50 +119,119 @@ public class GameControllerThread extends Thread
 			{
 				processEvent(event);
 			}
+			
+			sendMessageIfRequired();
+			
 		}
 	}
 	
-	private boolean processEvent(Event event)
+	private void sendMessageIfRequired()
 	{
-		System.out.println(event);
 		
-		return false;
+		if(lStick.x > lStick.y){ // turn
+			move = 0;
+			turn = (int) (lStick.x*(float)MAX_TURN);
+		} else { // move
+			turn = 0;
+			move = (int) (lStick.x*(float)MAX_MOVE);
+		}
+		
+		claw = (int)(rStick.x*(float)MAX_CLAW);
+		
+		System.out.print("Control:");
+		if(move != lastMove)
+		{
+			myControl.addMessage(new CommandMessage(CommandType.MOVE, move));
+			lastMove = move;
+			System.out.print("move ");
+		}
+		
+		if(turn != lastTurn)
+		{
+			myControl.addMessage(new CommandMessage(CommandType.MOVE, turn));
+			lastTurn = turn;
+			System.out.print("turn ");
+		}
+		
+		if(claw != lastClaw)
+		{
+			myControl.addMessage(new CommandMessage(CommandType.CLAW, claw));
+			lastClaw = claw;
+			System.out.print("claw");
+		}
+		System.out.println();
+		
+	}
+
+	private void clampStick(Point2D.Float stick, float deadZone)
+	{
+		if (Math.abs(stick.x) < deadZone) stick.x = 0.00f;
+		if (Math.abs(stick.y) < deadZone) stick.y = 0.00f;
 	}
 	
-	public void test()
+	private void processEvent(Event event)
 	{
-		ControllerEnvironment en = ControllerEnvironment
-				.getDefaultEnvironment();
-		
-		Controller pad = null;
-		
-		for (Controller c : en.getControllers())
+		// System.out.println(event);
+				
+		if (event.getComponent() == lsx)
 		{
-			// System.out.println(c.toString());
-			if (c.getType() == Controller.Type.GAMEPAD)
-			{
-				pad = c;
-				break;
-			}
+			lStick.x = event.getValue();
+		}
+		else if (event.getComponent() == lsy)
+		{
+			lStick.y = -event.getValue();
+		}
+		else if (event.getComponent() == rsx)
+		{
+			rStick.x = event.getValue();
+		}
+		else if (event.getComponent() == rsy)
+		{
+			rStick.y = -event.getValue();
 		}
 		
-		System.out.println(pad);
+		clampStick(lStick,STICK_DEADZONE);
+		clampStick(rStick,STICK_DEADZONE);
 		
-		pad.setEventQueueSize(10);
-		
-		Event e = new Event();
-		while (true)
-		{
-			try
-			{
-				Thread.sleep(1000 / 60);
-			}
-			catch (InterruptedException e1)
-			{
-			}
-			pad.poll();
-			pad.getEventQueue().getNextEvent(e);
-			System.out.println(e);
-		}
+		System.out.println("LS: " + lStick);
+		System.out.println("RS: " + rStick);
+				
 	}
+	
+//	private void test()
+//	{
+//		ControllerEnvironment en = ControllerEnvironment
+//				.getDefaultEnvironment();
+//		
+//		Controller pad = null;
+//		
+//		for (Controller c : en.getControllers())
+//		{
+//			// System.out.println(c.toString());
+//			if (c.getType() == Controller.Type.GAMEPAD)
+//			{
+//				pad = c;
+//				break;
+//			}
+//		}
+//		
+//		System.out.println(pad);
+//		
+//		pad.setEventQueueSize(10);
+//		
+//		Event e = new Event();
+//		while (true)
+//		{
+//			try
+//			{
+//				Thread.sleep(1000 / 60);
+//			}
+//			catch (InterruptedException e1)
+//			{
+//			}
+//			pad.poll();
+//			pad.getEventQueue().getNextEvent(e);
+//			// System.out.println(e);
+//		}
+//	}
 }

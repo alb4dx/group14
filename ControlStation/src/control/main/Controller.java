@@ -52,7 +52,7 @@ import control.devtool.DevToolWindow;
  * controller sends command messages from DebugInterface and
  */
 
-//TODO
+// TODO
 /*
  * Extract(): does not update the graph, and the error log
  * DebugInterface: Finish this
@@ -65,9 +65,10 @@ import control.devtool.DevToolWindow;
  * Handle loss of communication - try to reconnect 5 times then shut off
  * java docs
  * update design doc
- *
+ * 
  * Suggestion:
- * Generalize the error log in Graphics Interface to show all response messages to the user
+ * Generalize the error log in Graphics Interface to show all response messages
+ * to the user
  */
 
 // TODO extract doesnt update the graph, figure out how to bring up the debug
@@ -91,14 +92,15 @@ public class Controller
 	public final int						HEADINGINDEX	= 5;
 	public final int						SPEEDINDEX		= 6;
 	public final int						ULTRAINDEX		= 7;
-	public   	 int						SPEED			= 360;
-	public final int						MAXSPEED		= 720;
+	public int								SPEED			= 360;
+	public final static int					MAXSPEED		= 720;
+	public final static int					MAXTURN			= 720;
 	public final int						TURNSPEED		= 30;
 	public final int						TURNLEFT		= -TURNSPEED;
 	public final int						TURNRIGHT		= TURNSPEED;
 	
 	private boolean							debugMode		= true;
-
+	
 	public static void main(String[] args)
 	{
 		
@@ -217,85 +219,88 @@ public class Controller
 		
 		while (true)
 		{
-			if(myState == ControllerState.DISCONNECT) break;
-//			System.out.println("Command:");
-//			String command = scan.nextLine();
-//			
-//			int endCommand = command.length();
-//			CommandMessage cmd = null;
-//			if (command.substring(0, command.length()).equals("init"))
-//			{
-//				cmd = new CommandMessage(CommandType.INIT);
-//			}
-//			else if (command.substring(0, command.length()).equals("stop"))
-//			{
-//				cmd = new CommandMessage(CommandType.STOP);
-//			}
-//			else if (command.substring(0, command.length()).equals("query"))
-//			{
-//				cmd = new CommandMessage(CommandType.QUERY);
-//			}
-//			else if (command.substring(0, command.length()).equals("powd"))
-//			{
-//				cmd = new CommandMessage(CommandType.POWD);
-//			}
-//			else if (command.substring(0, command.length()).equals("halt"))
-//			{
-//				cmd = new CommandMessage(CommandType.HALT);
-//			}
-//			else if (command.substring(0, command.length()).equals("quit"))
-//			{
-//				cmd = new CommandMessage(CommandType.QUIT);
-//			}
-//			else if (command.substring(0, command.length()).equals("ack"))
-//			{
-//				cmd = new CommandMessage(CommandType.ACK);
-//			}
-//			else if (command.substring(0, command.length()).equals("auto"))
-//			{
-//				cmd = new CommandMessage(CommandType.AUTO);
-//			}
-//			else if (command.substring(0, command.length()).equals("rset"))
-//			{
-//				cmd = new CommandMessage(CommandType.RSET);
-//			}
-//			else if (command.substring(0, command.length()).equals("updt"))
-//			{
-//				cmd = new CommandMessage(CommandType.UPDT);
-//			}
-//			else if (command.substring(0, command.indexOf(":")).equals("move"))
-//			{
-//				endCommand = command.indexOf(":");
-//				cmd = new CommandMessage(CommandType.MOVE, command.substring(
-//						endCommand + 1, command.length()));
-//			}
-//			else if (command.substring(0, command.indexOf(":")).equals("turn"))
-//			{
-//				endCommand = command.indexOf(":");
-//				cmd = new CommandMessage(CommandType.TURN, command.substring(
-//						endCommand + 1, command.length()));
-//			}
-//			else if (command.substring(0, command.indexOf(":")).equals("claw"))
-//			{
-//				endCommand = command.indexOf(":");
-//				cmd = new CommandMessage(CommandType.CLAW, command.substring(
-//						endCommand + 1, command.length()));
-//			}
-//			addMessage(cmd);
-//			if (myState == ControllerState.CANSEND)
-//			{	
-//				if(cmd.getCommand() == CommandType.INIT){
-//					myState = ControllerState.CONNECTING;
-//				}
-//				else{
-//				myState = ControllerState.WAITACK1;
-//				}
-//				msgTimer.start();
-//				//System.out.println(cmd.getMessageString());
-//				myGraphics.updateMessageLog(cmd, true);
-//				messageSender.send(cmd);
-//				
-//			}
+			if (myState == ControllerState.DISCONNECT) break;
+			// System.out.println("Command:");
+			// String command = scan.nextLine();
+			//
+			// int endCommand = command.length();
+			// CommandMessage cmd = null;
+			// if (command.substring(0, command.length()).equals("init"))
+			// {
+			// cmd = new CommandMessage(CommandType.INIT);
+			// }
+			// else if (command.substring(0, command.length()).equals("stop"))
+			// {
+			// cmd = new CommandMessage(CommandType.STOP);
+			// }
+			// else if (command.substring(0, command.length()).equals("query"))
+			// {
+			// cmd = new CommandMessage(CommandType.QUERY);
+			// }
+			// else if (command.substring(0, command.length()).equals("powd"))
+			// {
+			// cmd = new CommandMessage(CommandType.POWD);
+			// }
+			// else if (command.substring(0, command.length()).equals("halt"))
+			// {
+			// cmd = new CommandMessage(CommandType.HALT);
+			// }
+			// else if (command.substring(0, command.length()).equals("quit"))
+			// {
+			// cmd = new CommandMessage(CommandType.QUIT);
+			// }
+			// else if (command.substring(0, command.length()).equals("ack"))
+			// {
+			// cmd = new CommandMessage(CommandType.ACK);
+			// }
+			// else if (command.substring(0, command.length()).equals("auto"))
+			// {
+			// cmd = new CommandMessage(CommandType.AUTO);
+			// }
+			// else if (command.substring(0, command.length()).equals("rset"))
+			// {
+			// cmd = new CommandMessage(CommandType.RSET);
+			// }
+			// else if (command.substring(0, command.length()).equals("updt"))
+			// {
+			// cmd = new CommandMessage(CommandType.UPDT);
+			// }
+			// else if (command.substring(0,
+			// command.indexOf(":")).equals("move"))
+			// {
+			// endCommand = command.indexOf(":");
+			// cmd = new CommandMessage(CommandType.MOVE, command.substring(
+			// endCommand + 1, command.length()));
+			// }
+			// else if (command.substring(0,
+			// command.indexOf(":")).equals("turn"))
+			// {
+			// endCommand = command.indexOf(":");
+			// cmd = new CommandMessage(CommandType.TURN, command.substring(
+			// endCommand + 1, command.length()));
+			// }
+			// else if (command.substring(0,
+			// command.indexOf(":")).equals("claw"))
+			// {
+			// endCommand = command.indexOf(":");
+			// cmd = new CommandMessage(CommandType.CLAW, command.substring(
+			// endCommand + 1, command.length()));
+			// }
+			// addMessage(cmd);
+			// if (myState == ControllerState.CANSEND)
+			// {
+			// if(cmd.getCommand() == CommandType.INIT){
+			// myState = ControllerState.CONNECTING;
+			// }
+			// else{
+			// myState = ControllerState.WAITACK1;
+			// }
+			// msgTimer.start();
+			// //System.out.println(cmd.getMessageString());
+			// myGraphics.updateMessageLog(cmd, true);
+			// messageSender.send(cmd);
+			//
+			// }
 		}
 		try
 		{
@@ -303,7 +308,8 @@ public class Controller
 		}
 		catch (IOException e)
 		{
-			System.err.println("Could not close NXT Comm. How did this happen??");
+			System.err
+					.println("Could not close NXT Comm. How did this happen??");
 			e.printStackTrace();
 		}
 		
@@ -336,8 +342,7 @@ public class Controller
 				.append(r.getMessageString());
 		// this still uses the messageQueue in controller to send
 		// messages
-		if (r.getResponse() == ResponseType.ERROR
-				&& r.getSeqNum() == this.seq)
+		if (r.getResponse() == ResponseType.ERROR && r.getSeqNum() == this.seq)
 		{
 			CommandMessage filler = new CommandMessage(CommandType.ACK);
 			CommandMessage ack = new CommandMessage(CommandType.ACK);
@@ -351,21 +356,25 @@ public class Controller
 		}
 		switch (myState)
 		{
-		//TODO what do we do when we get a failure for init
+		// TODO what do we do when we get a failure for init
 			case CONNECTING:
 				if (r.getResponse() == ResponseType.ACK
-				&& r.getSeqNum() == this.seq)
+						&& r.getSeqNum() == this.seq)
 				{
 					msgTimer.stop();
 				}
-				else if (r.getResponse() == ResponseType.CONN && r.getSeqNum() == this.seq){
+				else if (r.getResponse() == ResponseType.CONN
+						&& r.getSeqNum() == this.seq)
+				{
 					messageQueue.remove();
 					respondToDoneFail();
 				}
-				else if (r.getResponse() == ResponseType.NACK && r.getSeqNum() == this.seq){
+				else if (r.getResponse() == ResponseType.NACK
+						&& r.getSeqNum() == this.seq)
+				{
 					resend();
 				}
-				break;
+			break;
 			case WAITACK1:
 				if (r.getResponse() == ResponseType.ACK
 						&& r.getSeqNum() == this.seq)
@@ -425,10 +434,12 @@ public class Controller
 					}
 					respondToDoneFail();
 				}
-				
+			
 			break;
 			case QUITTING:
-				if (r.getResponse() == ResponseType.ACK && r.getSeqNum() == this.seq){
+				if (r.getResponse() == ResponseType.ACK
+						&& r.getSeqNum() == this.seq)
+				{
 					msgTimer.stop();
 					myState = ControllerState.DISCONNECT;
 				}
@@ -460,7 +471,8 @@ public class Controller
 		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING, DISCONNECT
 	}
 	
-	public void respondToDoneFail(){
+	public void respondToDoneFail()
+	{
 		if (this.seq == 0)
 		{
 			this.seq = 1;
@@ -471,8 +483,7 @@ public class Controller
 		}
 		if (messageQueue.peek() == null)
 		{
-			CommandMessage filler = new CommandMessage(
-					CommandType.ACK);
+			CommandMessage filler = new CommandMessage(CommandType.ACK);
 			CommandMessage ack = new CommandMessage(CommandType.ACK);
 			myState = ControllerState.CANSEND;
 			myGraphics.updateMessageLog(ack, true);
@@ -487,11 +498,12 @@ public class Controller
 			messageSender.send(messageQueue.peek());
 		}
 	}
+	
 	public void onInvalidMessage(String str)
 	{
 		System.err.println("Corrupted message received: " + str);
-		if(myState != ControllerState.WAITACK2 || myState !=ControllerState.WAITDATA)
-		resend();
+		if (myState != ControllerState.WAITACK2
+				|| myState != ControllerState.WAITDATA) resend();
 	}
 	
 	public void initInputHandler()
