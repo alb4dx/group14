@@ -41,7 +41,7 @@ public class GameControllerThread extends Thread
 	
 	static final int MAX_MOVE = control.main.Controller.MAXSPEED;
 	static final int MAX_TURN = control.main.Controller.MAXTURN;
-	private static final float	MAX_CLAW	= 360;
+	private static final int	MAX_CLAW	= 360;
 	
 	public static void main(String[] args)
 	{
