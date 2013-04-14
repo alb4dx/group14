@@ -22,6 +22,7 @@ import lejos.pc.comm.NXTInfo;
 import control.gui.DebugInterface;
 import control.gui.GraphicsInterface;
 import control.input.ControllerInputHandler;
+import control.input.GameControllerThread;
 import control.communication.CommandMessage;
 import control.communication.MessageListener;
 import control.communication.MessageSender;
@@ -78,6 +79,7 @@ public class Controller {
 	private static DebugInterface myDebug;
 	private MessageSender messageSender;
 	private MessageListener messageListener;
+	private Thread xboxThread;
 	private ControllerState myState;
 	private static Timer msgTimer;
 	private Timer queryTimer;
@@ -198,7 +200,7 @@ public class Controller {
 		// TODO change this back to 3000 10 secs just for testing purposes
 		msgTimer = new Timer(10000, timeOut);
 
-		initInputHandler();
+		initInputHandlers();
 
 		running: while (true) {
 			if (nxtComm == null) {
@@ -491,10 +493,12 @@ public class Controller {
 			resend();
 	}
 
-	public void initInputHandler() {
+	public void initInputHandlers() {
 		KeyboardFocusManager manager = KeyboardFocusManager
 				.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new ControllerInputHandler(this, manager));
+		xboxThread = new GameControllerThread(this);
+		xboxThread.start();
 	}
 
 	public ControllerState getState() {

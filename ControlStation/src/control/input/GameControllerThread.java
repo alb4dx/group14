@@ -43,6 +43,8 @@ public class GameControllerThread extends Thread
 	static final int MAX_TURN = control.main.Controller.MAXTURN;
 	private static final int	MAX_CLAW	= 360;
 	
+	static final long POLLS_PER_SEC = 20;
+	
 	public static void main(String[] args)
 	{
 		GameControllerThread g = new GameControllerThread(null);
@@ -109,7 +111,7 @@ public class GameControllerThread extends Thread
 		{
 			try
 			{
-				Thread.sleep(1000 / 60);
+				Thread.sleep(1000 / POLLS_PER_SEC);
 			}
 			catch (InterruptedException e1)
 			{
@@ -128,38 +130,38 @@ public class GameControllerThread extends Thread
 	private void sendMessageIfRequired()
 	{
 		
-		if(lStick.x > lStick.y){ // turn
+		if(Math.abs(lStick.x) > Math.abs(lStick.y)){ // turn
 			move = 0;
 			turn = (int) (lStick.x*(float)MAX_TURN);
 		} else { // move
 			turn = 0;
-			move = (int) (lStick.x*(float)MAX_MOVE);
+			move = (int) (lStick.y*(float)MAX_MOVE);
 		}
 		
 		claw = (int)(rStick.x*(float)MAX_CLAW);
 		
-		System.out.print("Control:");
+		//System.out.print("Control:");
 		if(move != lastMove)
 		{
 			myControl.addMessage(new CommandMessage(CommandType.MOVE, move));
 			lastMove = move;
-			System.out.print("move ");
+			//System.out.print("move ");
 		}
 		
 		if(turn != lastTurn)
 		{
-			myControl.addMessage(new CommandMessage(CommandType.MOVE, turn));
+			myControl.addMessage(new CommandMessage(CommandType.TURN, turn));
 			lastTurn = turn;
-			System.out.print("turn ");
+			//System.out.print("turn ");
 		}
 		
 		if(claw != lastClaw)
 		{
 			myControl.addMessage(new CommandMessage(CommandType.CLAW, claw));
 			lastClaw = claw;
-			System.out.print("claw");
+			//System.out.print("claw");
 		}
-		System.out.println();
+		//System.out.println();
 		
 	}
 
