@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
+import javax.swing.text.DefaultCaret;
 
 import org.jfree.chart.ChartPanel;
 
@@ -55,6 +56,7 @@ public class GraphicsInterface
 	private InformationHandler	myInfo;
 	private JLabel				speedLabel;
 	private JTextArea			speedText;
+	
 	
 	public JFrame getMyFrame() {
 		return myFrame;
@@ -187,24 +189,23 @@ public class GraphicsInterface
 		messageText.setAutoscrolls(true);
 		//messageText.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		// add in scroll bars, set auto scroll
-		//TODO HALP STEPH HOW DO I MAKE THIS DYNAMICALLY GROW
 		JScrollPane sp = new JScrollPane(messageText);
-		sp.setAutoscrolls(true);
-		sp.getVerticalScrollBar().addAdjustmentListener(
-				new AdjustmentListener()
-				{
-					public void adjustmentValueChanged(AdjustmentEvent e)
-					{
-						e.getAdjustable().setValue(
-								e.getAdjustable().getValue());
-					}
-				});
 		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		sp.setPreferredSize(new Dimension(450, 50));
 		messagePanel.add(messageLabel);
 		//messagePanel.add(messageText);
 		messagePanel.add(sp);
 		
+		DefaultCaret caret = (DefaultCaret)messageText.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		sp.getVerticalScrollBar().addAdjustmentListener( new AdjustmentListener() {
+			public void adjustmentValueChanged(AdjustmentEvent e) { 
+				e.getAdjustable().setValue( e.getAdjustable().getMaximum()); 
+			} 
+		});		
+		
+		messagePanel.add(messageLabel);
+		messagePanel.add(messageText);
 		
 		JPanel locPanel = new JPanel();
 		locPanel.setPreferredSize(new Dimension(450, 80));
