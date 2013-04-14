@@ -43,7 +43,7 @@ public class ControllerInputHandler implements KeyEventDispatcher
 				cmd = new CommandMessage(CommandType.TURN, controller.TURNRIGHT);
 			break;
 			case KeyEvent.VK_SPACE:
-				cmd = new CommandMessage(CommandType.CLAW, 1.0f);
+				cmd = new CommandMessage(CommandType.CLAW, 360);
 			break;
 			case KeyEvent.VK_1:
 				controller.SPEED = controller.MAXSPEED/10;
@@ -123,7 +123,7 @@ public class ControllerInputHandler implements KeyEventDispatcher
 				cmd = new CommandMessage(CommandType.STOP);
 			break;
 			case KeyEvent.VK_SPACE:
-				cmd = new CommandMessage(CommandType.CLAW, 0.0f);
+				cmd = new CommandMessage(CommandType.CLAW, 0);
 			break;
 		}
 		
@@ -133,19 +133,19 @@ public class ControllerInputHandler implements KeyEventDispatcher
 	private void sendAndWait(CommandMessage cmd)
 	{
 		controller.addMessage(cmd);
-		if (controller.getState() == ControllerState.CANSEND)
-		{	
-			if(cmd.getCommand() == CommandType.QUIT){
-				controller.setState(ControllerState.QUITTING);
-			}
-			else{
-			controller.setState(ControllerState.WAITACK1);
-			}
-			controller.getInterface().updateMessageLog(cmd, true);
-			controller.getMessageTimer().start();
-			///System.out.println(cmd.getMessageString());
-			controller.getMessageSender().send(cmd);
-		}
+//		if (controller.getState() == ControllerState.CANSEND)
+//		{	
+//			if(cmd.getCommand() == CommandType.QUIT){
+//				controller.setState(ControllerState.QUITTING);
+//			}
+//			else{
+//			controller.setState(ControllerState.WAITACK1);
+//			}
+//			//controller.getInterface().updateMessageLog(cmd, true);
+//			//controller.getMessageTimer().start();
+//			///System.out.println(cmd.getMessageString());
+//			//controller.getMessageSender().send(cmd);
+//		}
 	}
 	
 	private void keyPressed(KeyEvent e)

@@ -4,15 +4,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
@@ -175,37 +180,43 @@ public class GraphicsInterface
 		messageLabel = new JLabel("Message Log:");
 		messageLabel.setFont(new Font("Arial", Font.BOLD, 14));
 		
-		JPanel messagePanel = new JPanel();
-		messagePanel.setPreferredSize(new Dimension(450, 200));
-		messagePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 10));
-		
-		messageText = new JTextArea();
-		messageText.setFont(new Font("Arial", Font.PLAIN, 13));
-		messageText.setRows(5);
-		messageText.setColumns(15);
-		messageText.setLineWrap(true);
-		messageText.setEditable(false);
-		messageText.setPreferredSize(new Dimension(450, 50));
-		messageText.setAutoscrolls(true);
-		//messageText.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
-		// add in scroll bars, set auto scroll
-		JScrollPane sp = new JScrollPane(messageText);
-		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
-		sp.setPreferredSize(new Dimension(450, 50));
-		messagePanel.add(messageLabel);
-		//messagePanel.add(messageText);
-		messagePanel.add(sp);
-		
-		DefaultCaret caret = (DefaultCaret)messageText.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		sp.getVerticalScrollBar().addAdjustmentListener( new AdjustmentListener() {
-			public void adjustmentValueChanged(AdjustmentEvent e) { 
-				e.getAdjustable().setValue( e.getAdjustable().getMaximum()); 
-			} 
-		});		
-		
-		messagePanel.add(messageLabel);
-		messagePanel.add(messageText);
+			JPanel panel = new JPanel();
+			panel.setPreferredSize(new Dimension(450, 220));
+			panel.setLayout(new FlowLayout(FlowLayout.LEADING, 2, 4));
+			panel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+			// panel.setBackground(Color.BLACK);
+			JLabel messageLabel = new JLabel("Messages");
+			messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
+			messageLabel.setHorizontalAlignment(SwingConstants.LEFT);
+			JPanel fillerPanel = new JPanel();
+			fillerPanel.setPreferredSize(new Dimension(120, 10));
+			messageText = new JTextArea();
+			messageText.setFont(new Font("Arial", Font.BOLD, 13));
+			messageText.setRows(5);
+			messageText.setColumns(15);
+			messageText.setLineWrap(true);
+			messageText.setEditable(false);
+			messageText.setAutoscrolls(true);
+			
+			DefaultCaret caret = (DefaultCaret) messageText.getCaret();
+			caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+			// add in scroll bars, set auto scroll
+			JScrollPane sp = new JScrollPane(messageText);
+			sp.setAutoscrolls(true);
+			sp.getVerticalScrollBar().addAdjustmentListener(
+					new AdjustmentListener()
+					{
+						public void adjustmentValueChanged(AdjustmentEvent e)
+						{
+							e.getAdjustable().setValue(
+									e.getAdjustable().getValue());
+						}
+					});
+			sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
+			sp.setPreferredSize(new Dimension(450, 80));
+			panel.add(messageLabel);
+			panel.add(fillerPanel);
+			panel.add(sp);
 		
 		JPanel locPanel = new JPanel();
 		locPanel.setPreferredSize(new Dimension(450, 80));
@@ -264,10 +275,10 @@ public class GraphicsInterface
 		locPanel.add(speedLabel);
 		locPanel.add(speedText);
 		
-		messagePanel.add(locPanel);
+		panel.add(locPanel);
 		
 		content.add(dataPanel);
-		content.add(messagePanel);
+		content.add(panel);
 		
 		myFrame.setContentPane(content);
 		myFrame.setVisible(true);
