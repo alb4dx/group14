@@ -178,6 +178,7 @@ public class GraphicsInterface
 		JPanel messagePanel = new JPanel();
 		messagePanel.setPreferredSize(new Dimension(450, 200));
 		messagePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 10));
+		//messagePanel.setBackground(Color.blue);
 		
 		messageText = new JTextArea();
 		messageText.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -191,7 +192,7 @@ public class GraphicsInterface
 		// add in scroll bars, set auto scroll
 		JScrollPane sp = new JScrollPane(messageText);
 		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
-		sp.setPreferredSize(new Dimension(450, 50));
+		sp.setPreferredSize(new Dimension(450, 80));
 		messagePanel.add(messageLabel);
 		//messagePanel.add(messageText);
 		messagePanel.add(sp);
@@ -203,9 +204,6 @@ public class GraphicsInterface
 				e.getAdjustable().setValue( e.getAdjustable().getMaximum()); 
 			} 
 		});		
-		
-		messagePanel.add(messageLabel);
-		messagePanel.add(messageText);
 		
 		JPanel locPanel = new JPanel();
 		locPanel.setPreferredSize(new Dimension(450, 80));
