@@ -50,55 +50,55 @@ import control.devtool.DevToolWindow;
  */
 
 public class Controller {
-	/** Reference to the GUI of this controller*/
+	/** Reference to the GUI of this controller */
 	private static GraphicsInterface myGraphics;
-	/** the queue containing messages to be sent to the robot*/
+	/** the queue containing messages to be sent to the robot */
 	private static Queue<CommandMessage> messageQueue;
-	/** Reference to the debugger*/
+	/** Reference to the debugger */
 	private static DebugInterface myDebug;
-	/** Reference to the thread that will send messages to the robot*/
+	/** Reference to the thread that will send messages to the robot */
 	private MessageSender messageSender;
-	/** Reference to the thread that will listen to messages from the robot*/
+	/** Reference to the thread that will listen to messages from the robot */
 	private MessageListener messageListener;
-	/** Reference to the thread that will listen to the xbox controller*/
+	/** Reference to the thread that will listen to the xbox controller */
 	private Thread xboxThread;
-	/** The current state of the controller*/
+	/** The current state of the controller */
 	private ControllerState myState;
-	/** Reference to the msgTimer which will resend timed out messages*/
+	/** Reference to the msgTimer which will resend timed out messages */
 	private static Timer msgTimer;
-	/** Reference to the queryTimer that automatically sends query messages*/
+	/** Reference to the queryTimer that automatically sends query messages */
 	private Timer queryTimer;
-	/** The expected seqence number of the received message*/
+	/** The expected seqence number of the received message */
 	public int seq = 0;
-	/** The index of the distance value in a data response message*/
+	/** The index of the distance value in a data response message */
 	public final int DISTANCEINDEX = 0;
-	/** The index of the light value in a data response message*/
+	/** The index of the light value in a data response message */
 	public final int LIGHTINDEX = 1;
-	/** The index of the sound value in a data response message*/
+	/** The index of the sound value in a data response message */
 	public final int SOUNDINDEX = 2;
-	/** The index of the touch value in a data response message*/
+	/** The index of the touch value in a data response message */
 	public final int TOUCHINDEX = 3;
-	/** The index of the claw value in a data response message*/
+	/** The index of the claw value in a data response message */
 	public final int CLAWINDEX = 4;
-	/** The index of the heading value in a data response message*/
+	/** The index of the heading value in a data response message */
 	public final int HEADINGINDEX = 5;
-	/** The index of the speed value in a data response message*/
+	/** The index of the speed value in a data response message */
 	public final int SPEEDINDEX = 6;
-	/** The index of the ultrasonic value in a data response message*/
+	/** The index of the ultrasonic value in a data response message */
 	public final int ULTRAINDEX = 7;
-	/** The speed the robot will move at*/
+	/** The speed the robot will move at */
 	public int SPEED = 360;
-	/** The max speed of the robot*/
+	/** The max speed of the robot */
 	public final static int MAXSPEED = 720;
-	/** The max turn speed of the robot*/
+	/** The max turn speed of the robot */
 	public final static int MAXTURN = 360;
-	/** The current turn speed of the robot*/
+	/** The current turn speed of the robot */
 	public final int TURNSPEED = 30;
-	/** The value that will make the robot turn left*/
+	/** The value that will make the robot turn left */
 	public final int TURNLEFT = -TURNSPEED;
-	/** The value that will make the robot turn right*/
+	/** The value that will make the robot turn right */
 	public final int TURNRIGHT = TURNSPEED;
-	/** Boolean determining if the devtool will be used*/
+	/** Boolean determining if the devtool will be used */
 	private boolean debugMode = true;
 
 	public static void main(String[] args) {
@@ -473,6 +473,13 @@ public class Controller {
 		messageSender.send(messageQueue.element());
 	}
 
+	/**
+	 * The list of the Controller States is an enum with the values CANSEND,
+	 * CONNECTING, WAITACK1, WAITACK2, WAITDATA, DEBUG, QUITTING, DISCONNECT.
+	 * 
+	 * @author Hubert
+	 * 
+	 */
 	public enum ControllerState {
 		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING, DISCONNECT
 	}

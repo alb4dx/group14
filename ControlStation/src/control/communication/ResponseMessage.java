@@ -14,14 +14,18 @@ package control.communication;
  * 
  */
 public class ResponseMessage extends Message
-{
+{	
+	/** The array of descriptions of the values in valueArray in a data response*/
 	private String[]		fieldArray;
+	/** The values of a data response*/
 	private Object[]		valueArray;
+	/** A value of a response message*/
 	private Object			singleValue;
+	/** The response type of the message*/
 	private ResponseType	response;
 	
 	/**
-	 * constructor to create Response Message based on response
+	 * Constructor to create Response Message based on response
 	 * 
 	 */
 	public ResponseMessage()
@@ -29,22 +33,6 @@ public class ResponseMessage extends Message
 		this.singleValue = "";
 		this.response = null;
 	}
-	
-	/**
-	 * Three parameter constructor to define response message by response type,
-	 * array of fields and array of values
-	 * 
-	 * @param response
-	 *            type of response message
-	 * @param fields
-	 *            *
-	 * @param values
-	 *            *
-	 */
-	/*
-	 * private ResponseMessage(ResponseType response, String[] fields, Object[]
-	 * values) { //TODO }
-	 */
 	
 	/**
 	 * Parses a response String*
