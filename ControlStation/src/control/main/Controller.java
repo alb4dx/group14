@@ -1,5 +1,16 @@
 package control.main;
 
+/**
+ * This class contains all of the logic of our control station. It handles all of the sending
+ * and receiving of messages between the control station and the robot.
+ * @version 1.0 - Build 04/01/2013
+ * @author Stephanie Colen
+ * @author Sarina Padilla
+ * @author Hubert Chen
+ * @author Andy Barron
+ * @author John Zambrotta
+ * 
+ */
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,73 +43,62 @@ import control.communication.ResponseMessage.ResponseType;
 import control.devtool.DevNXTComm;
 import control.devtool.DevToolWindow;
 
-// LOGIC FOR DISPLAYING DEBUGGER
-// make a timer to send query command - don't send if query already in
-// messageQueue
-
-/* *
- * 
- * extract (graphics interface) - takes all info from info handler and displays
- * on GUI (refresh calls extract)
- * goals for this prototype - movement, claw, follows safety protocol /
- * disconnects,
- * keylistener in controller - hard code message - movement commands with WAD
- * (forward, backward, turning) press and hold says go, letting go says stop
- * W - move at 1 rev / s (360 degrees)
- * A/D - turns by 30 degrees
- * 
- * controller sends received messages from messageListener to private
- * DebugInterface
- * controller sends command messages from DebugInterface and
- */
-
 //TODO
 /*
- * Extract(): does not update the graph, and the error log
- * DebugInterface: Finish this
- * DebugMessages: make controller be able to handle this
- * Xbox Controller: everything
- * -Only movement messages have key listeners as of now
- * -javadoc the new methods
- * Controller: implement the Query Timer
- * -solidify the control scheme
- * Handle loss of communication - try to reconnect 5 times then shut off
  * java docs
  * update design doc
- *
- * Suggestion:
- * Generalize the error log in Graphics Interface to show all response messages to the user
  */
 
-// TODO extract doesnt update the graph, figure out how to bring up the debug
-// interface on error message
 public class Controller {
-
+	/** Reference to the GUI of this controller*/
 	private static GraphicsInterface myGraphics;
+	/** the queue containing messages to be sent to the robot*/
 	private static Queue<CommandMessage> messageQueue;
+	/** Reference to the debugger*/
 	private static DebugInterface myDebug;
+	/** Reference to the thread that will send messages to the robot*/
 	private MessageSender messageSender;
+	/** Reference to the thread that will listen to messages from the robot*/
 	private MessageListener messageListener;
+	/** Reference to the thread that will listen to the xbox controller*/
 	private Thread xboxThread;
+	/** The current state of the controller*/
 	private ControllerState myState;
+	/** Reference to the msgTimer which will resend timed out messages*/
 	private static Timer msgTimer;
+	/** Reference to the queryTimer that automatically sends query messages*/
 	private Timer queryTimer;
+	/** The expected seqence number of the received message*/
 	public int seq = 0;
+	/** The index of the distance value in a data response message*/
 	public final int DISTANCEINDEX = 0;
+	/** The index of the light value in a data response message*/
 	public final int LIGHTINDEX = 1;
+	/** The index of the sound value in a data response message*/
 	public final int SOUNDINDEX = 2;
+	/** The index of the touch value in a data response message*/
 	public final int TOUCHINDEX = 3;
+	/** The index of the claw value in a data response message*/
 	public final int CLAWINDEX = 4;
+	/** The index of the heading value in a data response message*/
 	public final int HEADINGINDEX = 5;
+	/** The index of the speed value in a data response message*/
 	public final int SPEEDINDEX = 6;
+	/** The index of the ultrasonic value in a data response message*/
 	public final int ULTRAINDEX = 7;
+	/** The speed the robot will move at*/
 	public int SPEED = 360;
+	/** The max speed of the robot*/
 	public final static int MAXSPEED = 720;
+	/** The max turn speed of the robot*/
 	public final static int MAXTURN = 360;
+	/** The current turn speed of the robot*/
 	public final int TURNSPEED = 30;
+	/** The value that will make the robot turn left*/
 	public final int TURNLEFT = -TURNSPEED;
+	/** The value that will make the robot turn right*/
 	public final int TURNRIGHT = TURNSPEED;
-
+	/** Boolean determining if the devtool will be used*/
 	private boolean debugMode = true;
 
 	public static void main(String[] args) {
@@ -108,6 +108,14 @@ public class Controller {
 
 	}
 
+	/**
+	 * This creates a bluetooth connection to our NXT brick with the specified
+	 * address. It will exit the program if a bluetooth NXTComm cannot be made
+	 * or if a connection to a brick cannot be made.
+	 * 
+	 * @return comm the NXTComm object with the bluetooth connection to the NXT
+	 *         brick
+	 */
 	private NXTComm connectToNXT() {
 
 		NXTComm comm = null;
@@ -138,6 +146,10 @@ public class Controller {
 
 	}
 
+	/**
+	 * 
+	 * @param debug
+	 */
 	public Controller(boolean debug) {
 
 		debugMode = debug;
@@ -154,8 +166,6 @@ public class Controller {
 			DevToolWindow dev = new DevToolWindow();
 			nxtComm = new DevNXTComm(dev.robotSim);
 		}
-
-		Scanner scan = new Scanner(System.in);
 
 		// Open NXTComm
 
@@ -198,7 +208,7 @@ public class Controller {
 			}
 		};
 		// TODO change this back to 3000 10 secs just for testing purposes
-		msgTimer = new Timer(10000, timeOut);
+		msgTimer = new Timer(3000, timeOut);
 
 		initInputHandlers();
 
@@ -324,6 +334,12 @@ public class Controller {
 
 	}
 
+	/**
+	 * Adds a message to the controller's messageQueue
+	 * 
+	 * @param msg
+	 *            the new message to be sent to the robot
+	 */
 	public void addMessage(CommandMessage msg) {
 		// add string to queue as message
 		// if (s.getCommand() == CommandType.UPDT)
@@ -338,6 +354,13 @@ public class Controller {
 		myDebug.getQueue().addMessage(msg);
 	}
 
+	/**
+	 * Generates an appropriate message according to our message protocol and
+	 * the state of the controller.
+	 * 
+	 * @param r
+	 *            the response message received from the robot
+	 */
 	public void onMessageReceive(ResponseMessage r) {
 		System.out.println("in state:" + myState);
 		System.out.println("Message received:" + r.getResponse());
@@ -436,21 +459,15 @@ public class Controller {
 			}
 			break;
 		}
-		// all robot responses given to debugger, which needs to send to robot
-		// response pane
-
-		// FIRST update information handler through myGraphics (method needs to
-		// be written)
-		// call extract in myGraphics (should refresh)
-		// if error message, print to error log in graphics interface
 	}
 
-	// if a response is received, send to debug interface, debug interface
-	// will then update robot response scroll pane
+	/**
+	 * This resends the current message to the robot as a result of a timeout.
+	 * It will also restart the msgTimer
+	 */
 	public void resend() {
 		msgTimer.stop();
 		msgTimer.restart();
-		// will crash if front of queue empty
 		System.out.println("Resending:"
 				+ messageQueue.element().getMessageString());
 		messageSender.send(messageQueue.element());
@@ -460,6 +477,11 @@ public class Controller {
 		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING, DISCONNECT
 	}
 
+	/**
+	 * Sends the next message in the queue after receiving a confirmation from
+	 * the robot that the current command has been executed. If there isn't a
+	 * message in the queue, and ACK is sent.
+	 */
 	public void respondToDoneFail() {
 		if (this.seq == 0) {
 			this.seq = 1;
@@ -486,6 +508,12 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Resends the current message if a corrupted message is received
+	 * 
+	 * @param str
+	 *            the corrupted message
+	 */
 	public void onInvalidMessage(String str) {
 		System.err.println("Corrupted message received: " + str);
 		if (myState != ControllerState.WAITACK2
@@ -493,6 +521,10 @@ public class Controller {
 			resend();
 	}
 
+	/**
+	 * Adds a keyboard input handler to the controller and start a thread for
+	 * listening to an xbox controller.
+	 */
 	public void initInputHandlers() {
 		KeyboardFocusManager manager = KeyboardFocusManager
 				.getCurrentKeyboardFocusManager();
@@ -501,22 +533,48 @@ public class Controller {
 		xboxThread.start();
 	}
 
+	/**
+	 * Returns the current state of the controller
+	 * 
+	 * @return myState the current state
+	 */
 	public ControllerState getState() {
 		return myState;
 	}
 
+	/**
+	 * Sets the current state of the controller to state
+	 * 
+	 * @param state
+	 *            the new state of the controller
+	 */
 	public void setState(ControllerState state) {
 		myState = state;
 	}
 
+	/**
+	 * Returns the messageSender thread
+	 * 
+	 * @return messageSender the thread sending messages to the robot
+	 */
 	public MessageSender getMessageSender() {
 		return messageSender;
 	}
 
+	/**
+	 * Returns the message timer
+	 * 
+	 * @return msgTimer the message timer
+	 */
 	public Timer getMessageTimer() {
 		return msgTimer;
 	}
 
+	/**
+	 * Returns the GUI associated with controller
+	 * 
+	 * @return myGraphics the GUI of the controller
+	 */
 	public GraphicsInterface getInterface() {
 		return myGraphics;
 	}
