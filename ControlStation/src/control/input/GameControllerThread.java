@@ -1,16 +1,12 @@
 package control.input;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import control.communication.CommandMessage;
 import control.communication.CommandMessage.CommandType;
-import control.communication.MessageSender;
 import net.java.games.input.Component;
-import net.java.games.input.Component.Identifier;
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
-import net.java.games.input.ControllerEvent;
 import net.java.games.input.Event;
 
 
@@ -45,17 +41,20 @@ public class GameControllerThread extends Thread
 	
 	static final long POLLS_PER_SEC = 20;
 	
-	public static void main(String[] args)
-	{
-		GameControllerThread g = new GameControllerThread(null);
-		g.start();
-	}
-	
+	/**
+	 * Constructor for the GameController 
+	 * 
+	 * @param control the Controller that uses this GameControllerThread
+	 */
 	public GameControllerThread(control.main.Controller control)
 	{
 		myControl = control;
 	}
 	
+	/**
+	 * Continually polls the game pad for input events and processes
+	 * them if necessary.
+	 */
 	public void run()
 	{
 		ControllerEnvironment en = ControllerEnvironment
@@ -63,70 +62,51 @@ public class GameControllerThread extends Thread
 		
 		Controller pad = null;
 		
-		for (Controller c : en.getControllers())
-		{
-			// System.out.println(c.toString());
-			if (c.getType() == Controller.Type.GAMEPAD)
-			{
+		for (Controller c : en.getControllers()) {
+			if (c.getType() == Controller.Type.GAMEPAD) {
 				pad = c;
 				break;
 			}
 		}
 		
-		if (pad == null)
-		{
+		if (pad == null) {
 			System.out.println("No controller found");
 			return;
 		}
-		
-		else
-		{
+		else {
 			System.out.println("Found controller: " + pad);
 		}
 		
 		pad.setEventQueueSize(EVENT_QUEUE_SIZE);
 		
-		for (Component c : pad.getComponents())
-		{
+		for (Component c : pad.getComponents()) {
 			String id = c.getIdentifier().getName();
-			if (id.equals(LS_X_ID))
-			{
+			if (id.equals(LS_X_ID)) {
 				lsx = c;
 			}
-			else if (id.equals(LS_Y_ID))
-			{
+			else if (id.equals(LS_Y_ID)) {
 				lsy = c;
 			}
-			else if (id.equals(RS_X_ID))
-			{
+			else if (id.equals(RS_X_ID)) {
 				rsx = c;
 			}
-			else if (id.equals(RS_Y_ID))
-			{
+			else if (id.equals(RS_Y_ID)) {
 				rsy = c;
 			}
 		}
 		
-		while (true)
-		{
-			try
-			{
+		while (true) {
+			try {
 				Thread.sleep(1000 / POLLS_PER_SEC);
-			}
-			catch (InterruptedException e1)
-			{
-			}
+			} catch (InterruptedException e1){ }
 			pad.poll();
-			while (pad.getEventQueue().getNextEvent(event))
-			{
+			while (pad.getEventQueue().getNextEvent(event)) {
 				processEvent(event);
 			}
-			
 			sendMessageIfRequired();
-			
 		}
 	}
-	
+
 	private void sendMessageIfRequired()
 	{
 		
@@ -140,29 +120,20 @@ public class GameControllerThread extends Thread
 		
 		claw = (int)(rStick.x*(float)MAX_CLAW);
 		
-		//System.out.print("Control:");
-		if(move != lastMove)
-		{
+		if(move != lastMove) {
 			myControl.addMessage(new CommandMessage(CommandType.MOVE, move));
 			lastMove = move;
-			//System.out.print("move ");
 		}
 		
-		if(turn != lastTurn)
-		{
+		if(turn != lastTurn) {
 			myControl.addMessage(new CommandMessage(CommandType.TURN, turn));
 			lastTurn = turn;
-			//System.out.print("turn ");
 		}
 		
-		if(claw != lastClaw)
-		{
+		if(claw != lastClaw) {
 			myControl.addMessage(new CommandMessage(CommandType.CLAW, claw));
 			lastClaw = claw;
-			//System.out.print("claw");
 		}
-		//System.out.println();
-		
 	}
 
 	private void clampStick(Point2D.Float stick, float deadZone)
@@ -173,22 +144,17 @@ public class GameControllerThread extends Thread
 	
 	private void processEvent(Event event)
 	{
-		// System.out.println(event);
 				
-		if (event.getComponent() == lsx)
-		{
+		if (event.getComponent() == lsx) {
 			lStick.x = event.getValue();
 		}
-		else if (event.getComponent() == lsy)
-		{
+		else if (event.getComponent() == lsy) {
 			lStick.y = -event.getValue();
 		}
-		else if (event.getComponent() == rsx)
-		{
+		else if (event.getComponent() == rsx) {
 			rStick.x = event.getValue();
 		}
-		else if (event.getComponent() == rsy)
-		{
+		else if (event.getComponent() == rsy) {
 			rStick.y = -event.getValue();
 		}
 		
@@ -196,44 +162,6 @@ public class GameControllerThread extends Thread
 		clampStick(rStick,STICK_DEADZONE);
 		
 		System.out.println("LS: " + lStick);
-		System.out.println("RS: " + rStick);
-				
+		System.out.println("RS: " + rStick);	
 	}
-	
-//	private void test()
-//	{
-//		ControllerEnvironment en = ControllerEnvironment
-//				.getDefaultEnvironment();
-//		
-//		Controller pad = null;
-//		
-//		for (Controller c : en.getControllers())
-//		{
-//			// System.out.println(c.toString());
-//			if (c.getType() == Controller.Type.GAMEPAD)
-//			{
-//				pad = c;
-//				break;
-//			}
-//		}
-//		
-//		System.out.println(pad);
-//		
-//		pad.setEventQueueSize(10);
-//		
-//		Event e = new Event();
-//		while (true)
-//		{
-//			try
-//			{
-//				Thread.sleep(1000 / 60);
-//			}
-//			catch (InterruptedException e1)
-//			{
-//			}
-//			pad.poll();
-//			pad.getEventQueue().getNextEvent(e);
-//			// System.out.println(e);
-//		}
-//	}
 }

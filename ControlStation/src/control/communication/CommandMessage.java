@@ -24,8 +24,7 @@ public class CommandMessage extends Message {
 	 * One parameter constructor to instantiate CommandMessage based on a
 	 * CommandType
 	 * 
-	 * @param command
-	 *            Type of command to create
+	 * @param command Type of command to create
 	 */
 	public CommandMessage(CommandType command) {
 		this.command = command;
@@ -66,10 +65,8 @@ public class CommandMessage extends Message {
 	 * Two parameter constructor to instantiate CommandMessage based on a
 	 * CommandType and an object base the CommandMessage on
 	 * 
-	 * @param command
-	 *            Type of command to create
-	 * @param param
-	 *            Object to base the CommandMessage on
+	 * @param command Type of command to create
+	 * @param param Object to base the CommandMessage on
 	 */
 	public CommandMessage(CommandType command, Object param) {
 		this.command = command;
@@ -97,8 +94,7 @@ public class CommandMessage extends Message {
 	/**
 	 * Set param field to param
 	 * 
-	 * @param param
-	 *            value param field is set to
+	 * @param param value param field is set to
 	 */
 	public void setParam(Object param) {
 		this.param = param;
@@ -107,8 +103,7 @@ public class CommandMessage extends Message {
 	/**
 	 * Set command field to command
 	 * 
-	 * @param command
-	 *            value command field is set to
+	 * @param command value command field is set to
 	 */
 	public void setCommand(CommandType command) {
 		this.command = command;

@@ -3,7 +3,9 @@ package control.main;
 /**
  * This class contains all of the logic of our control station. It handles all of the sending
  * and receiving of messages between the control station and the robot.
+ *
  * @version 1.0 - Build 04/01/2013
+ * 
  * @author Stephanie Colen
  * @author Sarina Padilla
  * @author Hubert Chen
@@ -14,14 +16,9 @@ package control.main;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 
 import javax.swing.Timer;
 
@@ -30,7 +27,6 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 
-import control.gui.DebugInterface;
 import control.gui.GraphicsInterface;
 import control.input.ControllerInputHandler;
 import control.input.GameControllerThread;
@@ -43,19 +39,13 @@ import control.communication.ResponseMessage.ResponseType;
 import control.devtool.DevNXTComm;
 import control.devtool.DevToolWindow;
 
-//TODO
-/*
- * java docs
- * update design doc
- */
+
 
 public class Controller {
 	/** Reference to the GUI of this controller */
 	private static GraphicsInterface myGraphics;
 	/** the queue containing messages to be sent to the robot */
 	private static Queue<CommandMessage> messageQueue;
-	/** Reference to the debugger */
-	private static DebugInterface myDebug;
 	/** Reference to the thread that will send messages to the robot */
 	private MessageSender messageSender;
 	/** Reference to the thread that will listen to messages from the robot */
@@ -92,6 +82,12 @@ public class Controller {
 	public final static int MAXSPEED = 720;
 	/** The max turn speed of the robot */
 	public final static int MAXTURN = 360;
+	/** The timer interval to send a query */
+	private static final int QUERY_DELAY = 5000;
+	/** The timer interval to send a message */
+	private static final int MESSAGE_DELAY = 3000;
+	/** The number of times to retry the connection before shutting off */
+	private static final int CONNECT_RETRY = 5;
 	/** The current turn speed of the robot */
 	public final int TURNSPEED = 30;
 	/** The value that will make the robot turn left */
@@ -147,15 +143,16 @@ public class Controller {
 	}
 
 	/**
+	 * The constructor for the controller - starts all connections and sets up all
+	 * appropriate GUIS.
 	 * 
-	 * @param debug
+	 * @param debug a boolean indicating whether or not the Controller is in debug mode
 	 */
 	public Controller(boolean debug) {
 
 		debugMode = debug;
 		myGraphics = new GraphicsInterface();
 		messageQueue = new LinkedList<CommandMessage>();
-		myDebug = new DebugInterface(this);
 		myState = ControllerState.CANSEND;
 
 		NXTComm nxtComm = null;
@@ -168,7 +165,6 @@ public class Controller {
 		}
 
 		// Open NXTComm
-
 		messageSender = new MessageSender(this, nxtComm);
 		messageListener = new MessageListener(this, nxtComm.getInputStream());
 		Thread sender = new Thread(messageSender);
@@ -196,9 +192,7 @@ public class Controller {
 				queryTimer.stop();
 			}
 		};
-		// TODO magic number!!
-		queryTimer = new Timer(5000, querySender);
-		// queryTimer.setInitialDelay(1000);
+		queryTimer = new Timer(QUERY_DELAY, querySender);
 		queryTimer.start();
 
 		ActionListener timeOut = new ActionListener() {
@@ -207,23 +201,21 @@ public class Controller {
 				resend();
 			}
 		};
-		// TODO change this back to 3000 10 secs just for testing purposes
-		msgTimer = new Timer(3000, timeOut);
+		msgTimer = new Timer(MESSAGE_DELAY, timeOut);
 
 		initInputHandlers();
 
 		running: while (true) {
 			if (nxtComm == null) {
 				System.out.println("connection lost attempting to reconnect");
-				for (int i = 0; i < 5; ++i) {
+				for (int i = 0; i < CONNECT_RETRY; ++i) {
 					nxtComm = connectToNXT();
 					if (nxtComm != null)
 						break;
-					if (nxtComm == null && i == 4)
+					if (nxtComm == null && i == (CONNECT_RETRY - 1))
 						break running;
 				}
 			}
-			// System.out.println("start while");
 			if (myState == ControllerState.CANSEND) {
 				if (messageQueue.peek() != null) {
 					if (messageQueue.peek().getCommand() == CommandType.QUIT)
@@ -239,93 +231,11 @@ public class Controller {
 			}
 			if (myState == ControllerState.DISCONNECT)
 				break;
-			// System.out.println("Command:");
-			// String command = scan.nextLine();
-			//
-			// int endCommand = command.length();
-			// CommandMessage cmd = null;
-			// if (command.substring(0, command.length()).equals("init"))
-			// {
-			// cmd = new CommandMessage(CommandType.INIT);
-			// }
-			// else if (command.substring(0, command.length()).equals("stop"))
-			// {
-			// cmd = new CommandMessage(CommandType.STOP);
-			// }
-			// else if (command.substring(0, command.length()).equals("query"))
-			// {
-			// cmd = new CommandMessage(CommandType.QUERY);
-			// }
-			// else if (command.substring(0, command.length()).equals("powd"))
-			// {
-			// cmd = new CommandMessage(CommandType.POWD);
-			// }
-			// else if (command.substring(0, command.length()).equals("halt"))
-			// {
-			// cmd = new CommandMessage(CommandType.HALT);
-			// }
-			// else if (command.substring(0, command.length()).equals("quit"))
-			// {
-			// cmd = new CommandMessage(CommandType.QUIT);
-			// }
-			// else if (command.substring(0, command.length()).equals("ack"))
-			// {
-			// cmd = new CommandMessage(CommandType.ACK);
-			// }
-			// else if (command.substring(0, command.length()).equals("auto"))
-			// {
-			// cmd = new CommandMessage(CommandType.AUTO);
-			// }
-			// else if (command.substring(0, command.length()).equals("rset"))
-			// {
-			// cmd = new CommandMessage(CommandType.RSET);
-			// }
-			// else if (command.substring(0, command.length()).equals("updt"))
-			// {
-			// cmd = new CommandMessage(CommandType.UPDT);
-			// }
-			// else if (command.substring(0,
-			// command.indexOf(":")).equals("move"))
-			// {
-			// endCommand = command.indexOf(":");
-			// cmd = new CommandMessage(CommandType.MOVE, command.substring(
-			// endCommand + 1, command.length()));
-			// }
-			// else if (command.substring(0,
-			// command.indexOf(":")).equals("turn"))
-			// {
-			// endCommand = command.indexOf(":");
-			// cmd = new CommandMessage(CommandType.TURN, command.substring(
-			// endCommand + 1, command.length()));
-			// }
-			// else if (command.substring(0,
-			// command.indexOf(":")).equals("claw"))
-			// {
-			// endCommand = command.indexOf(":");
-			// cmd = new CommandMessage(CommandType.CLAW, command.substring(
-			// endCommand + 1, command.length()));
-			// }
-			// addMessage(cmd);
-			// if (myState == ControllerState.CANSEND)
-			// {
-			// if(cmd.getCommand() == CommandType.INIT){
-			// myState = ControllerState.CONNECTING;
-			// }
-			// else{
-			// myState = ControllerState.WAITACK1;
-			// }
-			// msgTimer.start();
-			// //System.out.println(cmd.getMessageString());
-			// myGraphics.updateMessageLog(cmd, true);
-			// messageSender.send(cmd);
-			//
-			// }
 		}
 		try {
 			nxtComm.close();
 		} catch (IOException e) {
-			System.err
-					.println("Could not close NXT Comm. How did this happen??");
+			System.err.println("Could not close NXT Comm. How did this happen??");
 			e.printStackTrace();
 		}
 
@@ -337,29 +247,17 @@ public class Controller {
 	/**
 	 * Adds a message to the controller's messageQueue
 	 * 
-	 * @param msg
-	 *            the new message to be sent to the robot
+	 * @param msg the new message to be sent to the robot
 	 */
 	public void addMessage(CommandMessage msg) {
-		// add string to queue as message
-		// if (s.getCommand() == CommandType.UPDT)
-		// {
-		// messageQueue.add(s);
-		// }
-		// else
-		// {
-		// messageQueue.add(s);
-		// }
 		messageQueue.add(msg);
-		myDebug.getQueue().addMessage(msg);
 	}
 
 	/**
 	 * Generates an appropriate message according to our message protocol and
 	 * the state of the controller.
 	 * 
-	 * @param r
-	 *            the response message received from the robot
+	 * @param r the response message received from the robot
 	 */
 	public void onMessageReceive(ResponseMessage r) {
 		System.out.println("in state:" + myState);
@@ -367,23 +265,15 @@ public class Controller {
 		// message listener calls whenever a message receives (hands controller
 		// received message
 		myGraphics.updateMessageLog(r, false);
-		this.myDebug.getMyResponse().getMyResponses()
-				.append(r.getMessageString());
 		// this still uses the messageQueue in controller to send
 		// messages
 		if (r.getResponse() == ResponseType.ERROR && r.getSeqNum() == this.seq) {
 			CommandMessage filler = new CommandMessage(CommandType.ACK);
 			CommandMessage ack = new CommandMessage(CommandType.ACK);
-			// messageQueue.add(ack);
 			messageSender.send(ack);
-			myDebug.display();
-			myDebug.getMyFrame().invalidate();
-			myDebug.getMyFrame().validate();
-			myDebug.getMyFrame().repaint();
 			myState = ControllerState.DEBUG;
 		}
 		switch (myState) {
-		// TODO what do we do when we get a failure for init
 		case CONNECTING:
 			if (r.getResponse() == ResponseType.ACK
 					&& r.getSeqNum() == this.seq) {
@@ -411,9 +301,6 @@ public class Controller {
 				resend();
 			}
 			break;
-		// i need to let the user know a command failed Where do i put the
-		// message
-		// TODO check casting booleans in java
 		case WAITDATA:
 			if (r.getResponse() == ResponseType.DATA
 					&& r.getSeqNum() == this.seq) {
@@ -449,7 +336,6 @@ public class Controller {
 				}
 				respondToDoneFail();
 			}
-
 			break;
 		case QUITTING:
 			if (r.getResponse() == ResponseType.ACK
@@ -478,7 +364,6 @@ public class Controller {
 	 * CONNECTING, WAITACK1, WAITACK2, WAITDATA, DEBUG, QUITTING, DISCONNECT.
 	 * 
 	 * @author Hubert
-	 * 
 	 */
 	public enum ControllerState {
 		CANSEND, CONNECTING, WAITACK1, WAITDATA, WAITACK2, DEBUG, QUITTING, DISCONNECT
@@ -518,8 +403,7 @@ public class Controller {
 	/**
 	 * Resends the current message if a corrupted message is received
 	 * 
-	 * @param str
-	 *            the corrupted message
+	 * @param str the corrupted message
 	 */
 	public void onInvalidMessage(String str) {
 		System.err.println("Corrupted message received: " + str);
@@ -552,8 +436,7 @@ public class Controller {
 	/**
 	 * Sets the current state of the controller to state
 	 * 
-	 * @param state
-	 *            the new state of the controller
+	 * @param state the new state of the controller
 	 */
 	public void setState(ControllerState state) {
 		myState = state;

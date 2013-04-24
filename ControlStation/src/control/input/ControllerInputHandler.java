@@ -10,8 +10,6 @@ import java.util.TreeSet;
 import control.communication.CommandMessage;
 import control.communication.CommandMessage.CommandType;
 import control.main.Controller;
-import control.main.Controller.ControllerState;
-
 
 public class ControllerInputHandler implements KeyEventDispatcher
 {
@@ -20,6 +18,12 @@ public class ControllerInputHandler implements KeyEventDispatcher
 	private KeyboardFocusManager	manager;
 	private Set<Integer>			keysDown	= new TreeSet<Integer>();
 	
+	/**
+	 * The constructor for the ControllerInputHandler - sets fields 
+	 * 
+	 * @param control the Controller that uses this InputHandler
+	 * @param manager the KeyboardFocusManager that handles all keystrokes
+	 */
 	public ControllerInputHandler(Controller control,
 			KeyboardFocusManager manager)
 	{
@@ -133,59 +137,52 @@ public class ControllerInputHandler implements KeyEventDispatcher
 	private void sendAndWait(CommandMessage cmd)
 	{
 		controller.addMessage(cmd);
-//		if (controller.getState() == ControllerState.CANSEND)
-//		{	
-//			if(cmd.getCommand() == CommandType.QUIT){
-//				controller.setState(ControllerState.QUITTING);
-//			}
-//			else{
-//			controller.setState(ControllerState.WAITACK1);
-//			}
-//			//controller.getInterface().updateMessageLog(cmd, true);
-//			//controller.getMessageTimer().start();
-//			///System.out.println(cmd.getMessageString());
-//			//controller.getMessageSender().send(cmd);
-//		}
 	}
 	
 	private void keyPressed(KeyEvent e)
 	{
-		
-		//System.out.println("Key pressed: " + e);
-		
 		CommandMessage cmd = messageOnKeyPress(e.getKeyCode());
-		
-		if (cmd == null) return;
-		
-		else sendAndWait(cmd);
-		
+		if (cmd == null) {
+			return;
+		}
+		else {
+			sendAndWait(cmd);
+		}	
 	}
 	
 	private void keyReleased(KeyEvent e)
 	{
 		CommandMessage cmd = messageOnKeyRelease(e.getKeyCode());
-		
-		if (cmd == null) return;
-		
-		else sendAndWait(cmd);
-		
+		if (cmd == null) {
+			return;
+		}
+		else {
+			sendAndWait(cmd);
+		}
 	}
 	
+	/**
+	 * An interface method that captures KeyEvents associated with commands and calls 
+	 * relevant control methods or sends relevant command messages.
+	 */
 	public boolean dispatchKeyEvent(KeyEvent e)
 	{
 		
 		if (manager.getCurrentFocusCycleRoot() != controller.getInterface()
-				.getMyFrame()) return false;
-		
-		if (e.getID() == KeyEvent.KEY_PRESSED)
-		{
-			if (keysDown.add(e.getKeyCode())) keyPressed(e);
+				.getMyFrame()) {
+			return false;
+		}
+		if (e.getID() == KeyEvent.KEY_PRESSED) {
+			if (keysDown.add(e.getKeyCode())) {
+				keyPressed(e);
+			}
 			return true;
 		}
-		else if (e.getID() == KeyEvent.KEY_RELEASED)
-		{
-			if (keysDown.remove(e.getKeyCode())) keyReleased(e);
-			return true;
+		else if (e.getID() == KeyEvent.KEY_RELEASED) {
+			if (keysDown.remove(e.getKeyCode())) {
+				keyReleased(e);
+			}
+				return true;
 		}
 		return false;
 	}

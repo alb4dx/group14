@@ -1,8 +1,10 @@
-package control.data;
+package control.test;
 import javax.swing.*;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+
+import control.data.InformationHandler;
 
 public class ControlTest {
 
@@ -10,7 +12,6 @@ public class ControlTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		
 		// create InformationHandler test data

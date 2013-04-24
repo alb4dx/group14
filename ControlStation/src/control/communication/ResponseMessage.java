@@ -3,9 +3,10 @@ package control.communication;
 /**
  * 
  * The ResponseMessage class inherits the standard functionality of a Message
- * and is specific to
+ * and is specific to a message that is sent as a response to the robot
  * 
  * @version 1.0 - Build 04/01/2013
+ * 
  * @author Stephanie Colen
  * @author Sarina Padilla
  * @author Hubert Chen
@@ -26,7 +27,6 @@ public class ResponseMessage extends Message
 	
 	/**
 	 * Constructor to create Response Message based on response
-	 * 
 	 */
 	public ResponseMessage()
 	{
@@ -37,8 +37,7 @@ public class ResponseMessage extends Message
 	/**
 	 * Parses a response String*
 	 * 
-	 * @param responseString
-	 *            string of response message
+	 * @param responseString string of response message
 	 * @return null if message is corrupted
 	 * @return msg if message is valid
 	 */
@@ -48,55 +47,40 @@ public class ResponseMessage extends Message
 		int endCheck = responseString.indexOf("}");
 		int checkSum = 0;
 		
-		try
-		{
+		try {
 			checkSum = Integer.parseInt(responseString.substring(
 					startCheck + 1, endCheck));
-		}
-		catch (NumberFormatException e) // if we can't even parse the checksum,
-										// return null
+		} catch (NumberFormatException e) // if we can't even parse the checksum,
+										  // return null
 		{
 			return null;
 		}
 		
 		int sum = 0;
-		for (int i = 1; i < startCheck; ++i)
-		{
-			// System.out.print(responseString.charAt(i));
+		for (int i = 1; i < startCheck; ++i) {
 			sum += responseString.charAt(i);
 		}
-		// System.out.println();
-		// System.out.println("checksum of message is:" + checkSum);
-		// System.out.println("Calculated checksum is:" + ~sum);
 		ResponseMessage msg = new ResponseMessage();
-		if (checkSum + sum != -1)
-		{
+		if (checkSum + sum != -1) {
 			return null;
 		}
-		else
-		{
+		else {
 			int endCommand = responseString.indexOf(":");
 			int ampersand = responseString.indexOf("&");
 			String response = "";
-			if (ampersand != -1)
-			{
+			if (ampersand != -1) {
 				response = responseString.substring(2, ampersand);
 			}
-			else
-			{
-				if (endCommand != -1)
-				{
+			else {
+				if (endCommand != -1) {
 					response = responseString.substring(2, endCommand);
 				}
-				else
-				{
+				else {
 					response = responseString.substring(2,
 							responseString.indexOf("|"));
 				}
 			}
-			// System.out.println("response parsed is:" + response);
-			if (response.compareTo("conn") == 0)
-			{
+			if (response.compareTo("conn") == 0) {
 				msg.response = ResponseType.CONN;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -104,8 +88,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			if (response.compareTo("nack") == 0)
-			{
+			if (response.compareTo("nack") == 0) {
 				msg.response = ResponseType.NACK;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -113,8 +96,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("ack") == 0)
-			{
+			else if (response.compareTo("ack") == 0) {
 				msg.response = ResponseType.ACK;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -124,8 +106,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("done") == 0)
-			{
+			else if (response.compareTo("done") == 0) {
 				msg.response = ResponseType.DONE;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -135,8 +116,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("fail") == 0)
-			{
+			else if (response.compareTo("fail") == 0) {
 				msg.response = ResponseType.FAIL;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck - 1);
@@ -146,8 +126,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("error") == 0)
-			{
+			else if (response.compareTo("error") == 0) {
 				msg.response = ResponseType.ERROR;
 				msg.singleValue = responseString.substring(endCommand + 1,
 						startCheck);
@@ -157,9 +136,7 @@ public class ResponseMessage extends Message
 						responseString.indexOf("|"));
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("data") == 0)
-			{
-				//System.out.println("its a data msg");
+			else if (response.compareTo("data") == 0) {
 				msg.response = ResponseType.DATA;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -181,12 +158,10 @@ public class ResponseMessage extends Message
 				int touch = Integer.parseInt(responseString.substring(
 						endTouch + 1, responseString.indexOf("&", endTouch)));
 				boolean touching = false;
-				if (touch == 0)
-				{
+				if (touch == 0) {
 					touching = false;
 				}
-				else
-				{
+				else {
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
@@ -207,8 +182,7 @@ public class ResponseMessage extends Message
 						ultrasonic };
 				msg.formattedMessage = responseString;
 			}
-			else if (response.compareTo("updr") == 0)
-			{
+			else if (response.compareTo("updr") == 0) {
 				msg.response = ResponseType.UPDR;
 				msg.checksum = checkSum;
 				msg.seqNum = Integer.parseInt(responseString.substring(1, 2));
@@ -231,12 +205,10 @@ public class ResponseMessage extends Message
 				String touch = responseString.substring(endTouch + 1,
 						responseString.indexOf("&", endTouch));
 				boolean touching = false;
-				if (touch.compareTo("0") == 0)
-				{
+				if (touch.compareTo("0") == 0) {
 					touching = false;
 				}
-				else
-				{
+				else {
 					touching = true;
 				}
 				int endClaw = responseString.indexOf(":", endTouch + 1);
@@ -257,12 +229,10 @@ public class ResponseMessage extends Message
 						endConnStat + 1,
 						responseString.indexOf("&", endConnStat)));
 				boolean status = false;
-				if (connStat == 0)
-				{
+				if (connStat == 0) {
 					status = false;
 				}
-				else
-				{
+				else {
 					status = true;
 				}
 				int endMotorA = responseString.indexOf(":", endConnStat + 1);
@@ -280,7 +250,6 @@ public class ResponseMessage extends Message
 				msg.formattedMessage = responseString;
 			}
 		}
-		
 		return msg;
 	}
 	
@@ -327,10 +296,8 @@ public class ResponseMessage extends Message
 	/**
 	 * Set a specific index in fieldArray to field
 	 * 
-	 * @param index
-	 *            index in fieldArray
-	 * @param field
-	 *            name of the field in fieldArray
+	 * @param index index in fieldArray
+	 * @param field name of the field in fieldArray
 	 */
 	public void setFieldArray(int index, String field)
 	{
@@ -340,10 +307,8 @@ public class ResponseMessage extends Message
 	/**
 	 * Set a specific index in valueArray to field
 	 * 
-	 * @param index
-	 *            index in valueArray
-	 * @param field
-	 *            name of the field in valueArray
+	 * @param index index in valueArray
+	 * @param field name of the field in valueArray
 	 */
 	public void setValueArray(int index, String field)
 	{
@@ -353,8 +318,7 @@ public class ResponseMessage extends Message
 	/**
 	 * Set singleValue to value
 	 * 
-	 * @param value
-	 *            a message clarifying the response
+	 * @param value a message clarifying the response
 	 */
 	public void setSingleValue(Object value)
 	{
@@ -365,7 +329,6 @@ public class ResponseMessage extends Message
 	 * Enumerated response type to restrict types
 	 * 
 	 * @author Group 14
-	 * 
 	 */
 	public enum ResponseType
 	{

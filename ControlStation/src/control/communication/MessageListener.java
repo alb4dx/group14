@@ -13,27 +13,22 @@ import control.main.Controller;
  * passed into a Thread.
  * 
  * @author Andy Barron
- * 
  */
 public class MessageListener implements Runnable
 {
 	
 	private InputStream		inputListener;
 	private Controller		myController;
-	
 	private byte[]			buffer				= new byte[512];
 	private StringBuilder	charQueue			= new StringBuilder();
-	
 	static final int		CHAR_NOT_FOUND		= -1;
 	static final int		MAX_QUEUE_LENGTH	= 1024 * 16;
 	
 	/**
 	 * Constructor for MessageListner with required parameters
 	 * 
-	 * @param control
-	 *            program Controller
-	 * @param nxtStream
-	 *            InputStream for NXT
+	 * @param control program Controller
+	 * @param nxtStream InputStream for NXT
 	 */
 	public MessageListener(Controller control, InputStream nxtStream)
 	{
@@ -66,42 +61,32 @@ public class MessageListener implements Runnable
 	 * 
 	 * @throws IOException
 	 */
-	private void listen() throws IOException
-	{
-		
-		while (true)
-		{
-			// read from string to buffer, then append buffer to queue
-			
+	private void listen() throws IOException {
+		while (true) {
 			int len = inputListener.read(buffer);
 			if (len == -1) break; // if end of stream is reached
 				
-			for (int i = 0; i < len; i++)
-			{
+			for (int i = 0; i < len; i++) {
 				charQueue.append((char) buffer[i]);
 			}
 			
 			// find { and }
-			
 			int startBracket = charQueue.indexOf("{");
 			int endBracket = (startBracket == CHAR_NOT_FOUND) ? CHAR_NOT_FOUND
 					: charQueue.indexOf("}", startBracket);
 			
 			// if {}'s found, parse message
-			
-			if (startBracket != CHAR_NOT_FOUND && endBracket != CHAR_NOT_FOUND)
-			{
+			if (startBracket != CHAR_NOT_FOUND && endBracket != CHAR_NOT_FOUND) {
 				String str = charQueue
 						.substring(startBracket, endBracket + 1);
 				ResponseMessage response = ResponseMessage.parse(str);
 				
-				if (response != null) // if valid message, process
-				{
+				// if valid message, process
+				if (response != null) {
 					processMessage(response);
 				}
-				else
 				// if invalid message, do stuff
-				{
+				else {
 					processInvalidMessage(str);
 				}
 				
@@ -110,14 +95,10 @@ public class MessageListener implements Runnable
 			
 			// empty queue if it's huge, since we obviously have a problem with
 			// our messages
-			
-			if (charQueue.length() > MAX_QUEUE_LENGTH)
-			{
+			if (charQueue.length() > MAX_QUEUE_LENGTH) {
 				charQueue.delete(0, charQueue.length());
 			}
-			
 		}
-		
 	}
 	
 	/**
@@ -128,49 +109,16 @@ public class MessageListener implements Runnable
 	@Override
 	public void run()
 	{
-		
-		try
-		{
-			
-			listen();
-			
-		}
-		catch (IOException e)
-		{
-			
+		try {
+			listen();	
+		} catch (IOException e) {
 			String msg = "Error listening for messages: IOException";
-			for (StackTraceElement element : e.getStackTrace())
-			{
+			for (StackTraceElement element : e.getStackTrace()) {
 				msg += "\n     " + element;
 			}
-			
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, msg, "Fatal error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
-	// getters and setters.
-	// TODO do we actually need these...?
-	
-	public InputStream getInputListener()
-	{
-		return inputListener;
-	}
-	
-	public void setInputListener(InputStream inputListener)
-	{
-		this.inputListener = inputListener;
-	}
-	
-	public Controller getMyController()
-	{
-		return myController;
-	}
-	
-	public void setMyController(Controller myController)
-	{
-		this.myController = myController;
-	}
-	
 }

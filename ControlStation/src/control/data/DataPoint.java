@@ -3,6 +3,7 @@ package control.data;
 
 /**
  * Used to organize the telemetry data read from the robot
+ * 
  * @version 1.0 - Build 04/01/2013
  * @author Stephanie Colen
  * @author Sarina Padilla
@@ -14,13 +15,18 @@ package control.data;
 public class DataPoint
 {
 
+	/** The reading from the light sensor */
 	private int light;
+	/** The reading from the sound sensor */
 	private int sound;
+	/** The reading from the touch sensor */
 	private boolean touch;
+	/** The reading from the ultrasonic sensor */
 	private int ultrasonic;
 	
 	/**
 	 * 4 parameter constructor creates datapoint based on all telemetry data
+	 * 
 	 * @param light	data from light sensor
 	 * @param sound	data from sound sensor
 	 * @param ultrasonic	ultrasonic data from ultrasonic sensor

@@ -4,23 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 import javax.swing.text.DefaultCaret;
 
 import org.jfree.chart.ChartPanel;
@@ -39,102 +34,101 @@ import control.data.InformationHandler;
  * data from the InformationHandler instance and displays the new 
  * graph and orientation/heading information by updating the GUI.
  * 
- * @author Steph
+ * @version 1.0 - 4/01/2013
  * 
- * testing 32 bit eclipse!s
- * 
- * John was here
+ * @author Steph Colen
+ * @author Hubert Chen
+ * @author Andy Barron
+ * @author Sarina Padilla
+ * @author John Zambrotta
  *
  */
 public class GraphicsInterface
 {
 	
-
-	private JFrame				myFrame;			// The frame encompassing the whole GUI
-	private ChartPanel			dataPanel;			// The graph displaying past and present telemetry data
-	private JLabel				messageLabel;		// The label for the message section heading
-	private JLabel				locationLabel;		// The label for the location section heading
-	private JLabel				orientationLabel;  	// The label for the orientation section heading
-	private JTextArea			messageText;		// The JTextArea displaying the messages sent and received
-	private JTextArea			locationText;		// The JTextArea displaying the location of the robot relative to its starting position
-	private JTextArea			orientationText;	// The JTextArea displaying the orientation of the robot relative to its starting position
-	private InformationHandler	myInfo;
+	/** The frame encompassing the whole GUI */
+	private JFrame				myFrame;
+	/** The graph displaying past and present telemetry data */		
+	private ChartPanel			dataPanel;	
+	/** The label for the message section heading */	
+	private JLabel				messageLabel;		
+	/** The label for the location section heading */
+	private JLabel				locationLabel;		
+	/** The label for the orientation section heading */
+	private JLabel				orientationLabel;  	
+	/** The JTextArea displaying the messages sent and received */
+	private JTextArea			messageText;		
+	/** The JTextArea displaying the location of the robot relative to its starting position */
+	private JTextArea			locationText;		
+	/** The JTextArea displaying the orientation of the robot relative to its starting position */
+	private JTextArea			orientationText;	
+	/** The InformationHandler that processes data to display on the graph */
+	private InformationHandler	myInfo;				
+	/** The label for the speed section heading */
 	private JLabel				speedLabel;
+	/** The JTExt area displaying the speed of the robot */
 	private JTextArea			speedText;
 	
-	
+	/**
+	 * A method to return the frame encompassing the GraphicsInterface object
+	 * 
+	 * @return a JFrame encasing the GraphicsInterface
+	 */
 	public JFrame getMyFrame() {
 		return myFrame;
 	}
 
+	/**
+	 * Sets the frame encompassing the GraphicsInterface object 
+	 * 
+	 * @param myFrame the JFrame to set the encasing frame to
+	 */
 	public void setMyFrame(JFrame myFrame) {
 		this.myFrame = myFrame;
 	}
 
+	/**
+	 * A method to return the telemetry graph for this GraphicsInterface object 
+	 * 
+	 * @return dataPanel a JPanel containing the telemetry graph
+	 */
 	public JPanel getDataGraph() {
 		return dataPanel;
 	}
 
+	/**
+	 * Sets the telemetry graph for this GraphicsInterface object 
+	 * 
+	 * @param dataGraph a JPanel containing the new graph
+	 */
 	public void setDataGraph(JPanel dataGraph) {
 		this.dataPanel = (ChartPanel) dataGraph;
 	}
-
-	public JLabel getErrorLabel() {
-		return messageLabel;
-	}
-
-	public void setErrorLabel(JLabel errorLabel) {
-		this.messageLabel = errorLabel;
-	}
-
-	public JLabel getLocationLabel() {
-		return locationLabel;
-	}
-
-	public void setLocationLabel(JLabel locationLabel) {
-		this.locationLabel = locationLabel;
-	}
-
-	public JLabel getOrientationLabel() {
-		return orientationLabel;
-	}
-
-	public void setOrientationLabel(JLabel orientationLabel) {
-		this.orientationLabel = orientationLabel;
-	}
-
-	public JTextArea getMessageText() {
-		return messageText;
-	}
-
+	
+	/** 
+	 * Sets the text of the message log to the passed parameter 
+	 * 
+	 * @param errorText the JTextArea to set as the message log
+	 */
 	public void setMessageText(JTextArea errorText) {
 		this.messageText = errorText;
 	}
 
-	public JTextArea getLocationText() {
-		return locationText;
-	}
-
-	public void setLocationText(JTextArea locationText) {
-		this.locationText = locationText;
-	}
-
-	public JTextArea getOrientationText() {
-		return orientationText;
-	}
-
-	public void setOrientationText(JTextArea orientationText) {
-		this.orientationText = orientationText;
-	}
-
+	/**
+	 * A method to return the InformationHandler for this GraphicsInterface object
+	 * 
+	 * @return myInfo the GraphicsInterface object
+	 */
 	public InformationHandler getMyInfo() {
 		return myInfo;
 	}
-
-	public void setMyInfo(InformationHandler myInfo) {
-		this.myInfo = myInfo;
-	}
 	
+	/**
+	 * Updates the message log based on passed Message and classification of said message
+	 * 
+	 * @param msg the Message to be added to the message log
+	 * @param commandOrResponse a boolean indicating whether or not the message is sent or received
+	 */
 	public void updateMessageLog(Message msg, boolean commandOrResponse){
 		if(commandOrResponse){
 			messageText.append("Message sent:"+msg.getMessageString()+'\n');
@@ -142,10 +136,8 @@ public class GraphicsInterface
 		else{
 			messageText.append("Message received:"+msg.getMessageString()+'\n');
 		}
-//		messageText.invalidate();
-//		messageText.validate();
-//		messageText.repaint();
 	}
+	
 	/**
 	 * The constructor for the GraphicsInterface object: it is 
 	 * called in Controller upon initialization and instantiates
@@ -175,48 +167,46 @@ public class GraphicsInterface
 		 
 		dataPanel = myInfo.getPanel();
 		dataPanel.setPreferredSize(new Dimension(450, 200));
-		//dataGraph.setBackground(Color.blue);
 	
 		messageLabel = new JLabel("Message Log:");
 		messageLabel.setFont(new Font("Arial", Font.BOLD, 14));
+	
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(450, 220));
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING, 2, 4));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+		JLabel messageLabel = new JLabel("Messages");
+		messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
+		messageLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		JPanel fillerPanel = new JPanel();
+		fillerPanel.setPreferredSize(new Dimension(120, 10));
+		messageText = new JTextArea();
+		messageText.setFont(new Font("Arial", Font.BOLD, 13));
+		messageText.setRows(5);
+		messageText.setColumns(15);
+		messageText.setLineWrap(true);
+		messageText.setEditable(false);
+		messageText.setAutoscrolls(true);
 		
-			JPanel panel = new JPanel();
-			panel.setPreferredSize(new Dimension(450, 220));
-			panel.setLayout(new FlowLayout(FlowLayout.LEADING, 2, 4));
-			panel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
-			// panel.setBackground(Color.BLACK);
-			JLabel messageLabel = new JLabel("Messages");
-			messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
-			messageLabel.setHorizontalAlignment(SwingConstants.LEFT);
-			JPanel fillerPanel = new JPanel();
-			fillerPanel.setPreferredSize(new Dimension(120, 10));
-			messageText = new JTextArea();
-			messageText.setFont(new Font("Arial", Font.BOLD, 13));
-			messageText.setRows(5);
-			messageText.setColumns(15);
-			messageText.setLineWrap(true);
-			messageText.setEditable(false);
-			messageText.setAutoscrolls(true);
-			
-			DefaultCaret caret = (DefaultCaret) messageText.getCaret();
-			caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-			// add in scroll bars, set auto scroll
-			JScrollPane sp = new JScrollPane(messageText);
-			sp.setAutoscrolls(true);
-			sp.getVerticalScrollBar().addAdjustmentListener(
-					new AdjustmentListener()
+		DefaultCaret caret = (DefaultCaret) messageText.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		// add in scroll bars, set auto scroll
+		JScrollPane sp = new JScrollPane(messageText);
+		sp.setAutoscrolls(true);
+		sp.getVerticalScrollBar().addAdjustmentListener(
+				new AdjustmentListener()
+				{
+					public void adjustmentValueChanged(AdjustmentEvent e)
 					{
-						public void adjustmentValueChanged(AdjustmentEvent e)
-						{
-							e.getAdjustable().setValue(
-									e.getAdjustable().getValue());
-						}
-					});
-			sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
-			sp.setPreferredSize(new Dimension(450, 80));
-			panel.add(messageLabel);
-			panel.add(fillerPanel);
-			panel.add(sp);
+						e.getAdjustable().setValue(
+								e.getAdjustable().getValue());
+					}
+				});
+		sp.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
+		sp.setPreferredSize(new Dimension(450, 80));
+		panel.add(messageLabel);
+		panel.add(fillerPanel);
+		panel.add(sp);
 		
 		JPanel locPanel = new JPanel();
 		locPanel.setPreferredSize(new Dimension(450, 80));
@@ -294,11 +284,8 @@ public class GraphicsInterface
 	 * extract() is called from the Controller whenever new data 
 	 * is received in the Controller from MessageListener.
 	 */
-	
 	public void extract()
 	{
-		// TODO graph does not update.
-		System.out.println("Im in extract");
 		myInfo.updateGraph();
 		this.locationText.setText(Integer.toString(this.myInfo.getDistance()));
 		this.speedText.setText(Integer.toString(this.myInfo.getSpeed()));
@@ -333,9 +320,5 @@ public class GraphicsInterface
 		this.myFrame.invalidate();
 		this.myFrame.validate();
 		this.myFrame.repaint();
-		//this doesn't work:(
-//		this.dataGraph.invalidate();
-//		this.dataGraph.validate();
-//		this.dataGraph.repaint();
 	}
 }
