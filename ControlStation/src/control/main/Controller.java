@@ -212,9 +212,18 @@ public class Controller {
 					nxtComm = connectToNXT();
 					if (nxtComm != null)
 						break;
+					else{
+						//do nothing
+					}
 					if (nxtComm == null && i == (CONNECT_RETRY - 1))
 						break running;
+					else{
+						//do nothing
+					}
 				}
+			}
+			else{
+				//do nothing
 			}
 			if (myState == ControllerState.CANSEND) {
 				if (messageQueue.peek() != null) {
@@ -228,9 +237,18 @@ public class Controller {
 					System.out.println("Message sent:"
 							+ messageQueue.peek().getMessageString());
 				}
+				else{
+					//do nothing
+				}
+			}
+			else{
+				//do nothing
 			}
 			if (myState == ControllerState.DISCONNECT)
 				break;
+			else{
+				//do nothing
+			}
 		}
 		try {
 			nxtComm.close();
@@ -273,6 +291,9 @@ public class Controller {
 			messageSender.send(ack);
 			myState = ControllerState.DEBUG;
 		}
+		else{
+			//do nothing
+		}
 		switch (myState) {
 		case CONNECTING:
 			if (r.getResponse() == ResponseType.ACK
@@ -285,6 +306,9 @@ public class Controller {
 			} else if (r.getResponse() == ResponseType.NACK
 					&& r.getSeqNum() == this.seq) {
 				resend();
+			}
+			else{
+				//do nothing
 			}
 			break;
 		case WAITACK1:
@@ -299,6 +323,9 @@ public class Controller {
 			} else if (r.getResponse() == ResponseType.NACK
 					&& r.getSeqNum() == this.seq) {
 				resend();
+			}
+			else{
+				//do nothing
 			}
 			break;
 		case WAITDATA:
@@ -326,6 +353,9 @@ public class Controller {
 				respondToDoneFail();
 				queryTimer.restart();
 			}
+			else{
+				//do nothing
+			}
 			break;
 		case WAITACK2:
 			if ((r.getResponse() == ResponseType.DONE || r.getResponse() == ResponseType.FAIL)
@@ -333,6 +363,9 @@ public class Controller {
 				messageQueue.remove();
 				if (r.getResponse() == ResponseType.FAIL) {
 					System.out.println(r.getMessageString());
+				}
+				else{
+					//do nothing
 				}
 				respondToDoneFail();
 			}
@@ -342,6 +375,9 @@ public class Controller {
 					&& r.getSeqNum() == this.seq) {
 				msgTimer.stop();
 				myState = ControllerState.DISCONNECT;
+			}
+			else{
+				//do nothing
 			}
 			break;
 		}
@@ -410,6 +446,9 @@ public class Controller {
 		if (myState != ControllerState.WAITACK2
 				|| myState != ControllerState.WAITDATA)
 			resend();
+		else{
+			//do nothing
+		}
 	}
 
 	/**
