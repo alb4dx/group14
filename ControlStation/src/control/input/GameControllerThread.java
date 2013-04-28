@@ -227,6 +227,7 @@ public class GameControllerThread extends Thread
 		}
 		else
 		{
+			// do nothing
 		}
 		
 		clampStick(lStick, STICK_DEADZONE);
