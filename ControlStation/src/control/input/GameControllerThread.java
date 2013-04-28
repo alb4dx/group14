@@ -32,7 +32,7 @@ public class GameControllerThread extends Thread
 	static final String		RS_X_ID				= "rx";
 	static final String		RS_Y_ID				= "ry";
 	
-	static final float		STICK_DEADZONE		= .3f;
+	static final float		STICK_DEADZONE		= .1f;
 	
 	int move,turn,claw;
 	int lastMove,lastTurn,lastClaw;
@@ -43,7 +43,11 @@ public class GameControllerThread extends Thread
 	static final int MAX_TURN = control.main.Controller.MAXTURN;
 	private static final int	MAX_CLAW	= 360;
 	
-	static final long POLLS_PER_SEC = 20;
+	static final int MOVE_STEPS = 6;
+	static final int TURN_STEPS = 6;
+	static final int CLAW_STEPS = 6;
+	
+	static final long POLLS_PER_SEC = 10;
 	
 	public static void main(String[] args)
 	{
@@ -140,6 +144,10 @@ public class GameControllerThread extends Thread
 		
 		claw = (int)(rStick.x*(float)MAX_CLAW);
 		
+		turn = granularize(turn,MAX_TURN,TURN_STEPS);
+		move = granularize(move,MAX_MOVE,MOVE_STEPS);
+		claw = granularize(claw,MAX_CLAW,CLAW_STEPS);
+		
 		//System.out.print("Control:");
 		if(move != lastMove)
 		{
@@ -195,9 +203,16 @@ public class GameControllerThread extends Thread
 		clampStick(lStick,STICK_DEADZONE);
 		clampStick(rStick,STICK_DEADZONE);
 		
-		System.out.println("LS: " + lStick);
-		System.out.println("RS: " + rStick);
+		//System.out.println("LS: " + lStick);
+		//System.out.println("RS: " + rStick);
 				
+	}
+	
+	private static int granularize(int value, int max, int steps)
+	{
+		int stepSize = Math.round((float)max/((float)steps-1));
+		int numSteps = Math.round((float)value/(float)stepSize);
+		return numSteps*stepSize;
 	}
 	
 //	private void test()
