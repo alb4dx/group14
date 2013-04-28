@@ -99,7 +99,7 @@ public class Controller {
 
 	public static void main(String[] args) {
 
-		boolean debug = true;
+		boolean debug = false;
 		new Controller(debug);
 
 	}
@@ -227,8 +227,19 @@ public class Controller {
 			}
 			if (myState == ControllerState.CANSEND) {
 				if (messageQueue.peek() != null) {
-					if (messageQueue.peek().getCommand() == CommandType.QUIT)
-						myState = ControllerState.QUITTING;
+					if (messageQueue.peek().getCommand() == CommandType.QUIT){
+						messageSender.send(messageQueue.peek());
+						try
+						{
+							Thread.sleep(10);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						myState = ControllerState.DISCONNECT;
+					}
 					else
 						myState = ControllerState.WAITACK1;
 					myGraphics.updateMessageLog(messageQueue.peek(), true);
@@ -370,7 +381,7 @@ public class Controller {
 				respondToDoneFail();
 			}
 			break;
-		case QUITTING:
+		/*case QUITTING:
 			if (r.getResponse() == ResponseType.ACK
 					&& r.getSeqNum() == this.seq) {
 				msgTimer.stop();
@@ -379,7 +390,7 @@ public class Controller {
 			else{
 				//do nothing
 			}
-			break;
+			break;*/
 		}
 	}
 

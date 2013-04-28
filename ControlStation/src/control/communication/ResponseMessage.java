@@ -138,8 +138,7 @@ public class ResponseMessage extends Message {
 				msg.fieldArray = new String[] { "distance:", "light:",
 						"sound:", "touch:", "claw:", "heading:", "speed:",
 						"ultrasonic:" };
-				int distance = Integer
-						.parseInt(responseString.substring(endCommand + 1,
+				int distance = (int)Double.parseDouble(responseString.substring(endCommand + 1,
 								responseString.indexOf("&", endCommand)));
 				int endLight = responseString.indexOf(":", endCommand + 1);
 				int light = Integer.parseInt(responseString.substring(
@@ -160,8 +159,8 @@ public class ResponseMessage extends Message {
 				int claw = Integer.parseInt(responseString.substring(
 						endClaw + 1, responseString.indexOf("&", endClaw)));
 				int endHeading = responseString.indexOf(":", endClaw + 1);
-				int heading = Integer
-						.parseInt(responseString.substring(endHeading + 1,
+				int heading = (int)Double
+						.parseDouble(responseString.substring(endHeading + 1,
 								responseString.indexOf("&", endHeading)));
 				int endSpeed = responseString.indexOf(":", endHeading + 1);
 				int speed = Integer.parseInt(responseString.substring(
